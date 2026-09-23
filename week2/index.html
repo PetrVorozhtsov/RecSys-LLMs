@@ -14,12 +14,16 @@
             <p>Compare recommendations from one active movie with recommendations from an aggregated user profile.</p>
         </header>
 
+        <!-- Assignment point: collect one active item and three liked titles for the two comparison strategies. -->
+
         <section class="controls" aria-labelledby="controls-title">
             <h2 id="controls-title">Build a user profile</h2>
             <label for="active-movie">Active movie (item-to-item)</label>
             <select id="active-movie" class="movie-select">
                 <option value="">Loading movies...</option>
             </select>
+            <!-- Assignment point: the three liked titles form the averaged user profile vector. -->
+
             <div class="profile-grid">
                 <label>Liked movie 1<select id="profile-movie-1" class="movie-select"></select></label>
                 <label>Liked movie 2<select id="profile-movie-2" class="movie-select"></select></label>
@@ -29,6 +33,8 @@
         </section>
 
         <p id="result" class="status">Please wait, loading data...</p>
+
+        <!-- Assignment point: show Top-5 item-to-item and profile-based results side by side. -->
 
         <section class="recommendation-grid" aria-label="Recommendation comparison">
             <article class="panel">
@@ -42,6 +48,8 @@
                 <ol id="profile-recommendations" class="recommendations"></ol>
             </article>
         </section>
+
+        <!-- Assignment point: report cosine normalization and long-tail discovery observations. -->
 
         <section class="analysis panel">
             <h2>Business and algorithmic analysis</h2>

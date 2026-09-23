@@ -1,3 +1,5 @@
+// Assignment point: both recommendation strategies must return a Top-5 list.
+
 const TOP_K = 5;
 
 window.onload = async function initialize() {
@@ -34,6 +36,8 @@ function populateMovieSelects() {
     });
 }
 
+// Assignment point: replace naive/Jaccard matching with cosine similarity between content vectors.
+
 function cosineSimilarity(a, b) {
     let dot = 0;
     let normA = 0;
@@ -47,6 +51,8 @@ function cosineSimilarity(a, b) {
     return denominator === 0 ? 0 : dot / denominator;
 }
 
+// Assignment point: build a user profile by averaging the vectors of multiple watched titles.
+
 function averageVectors(movieList) {
     const result = Array(genreNames.length).fill(0);
     movieList.forEach(movie => movie.vector.forEach((value, index) => {
@@ -54,6 +60,8 @@ function averageVectors(movieList) {
     }));
     return result;
 }
+
+// Assignment point: score every unseen catalog item, rank by cosine similarity, and keep the Top-5 results.
 
 function scoreCandidates(queryVector, excludedIds) {
     return movies
@@ -66,6 +74,8 @@ function scoreCandidates(queryVector, excludedIds) {
 function getSelectedMovie(id) {
     return movies.find(movie => movie.id === Number.parseInt(id, 10));
 }
+
+// Assignment point: compare item-to-item recommendations with profile-based recommendations.
 
 function getRecommendations() {
     const activeMovie = getSelectedMovie(document.getElementById('active-movie').value);
@@ -111,6 +121,8 @@ function median(values) {
     const sorted = [...values].sort((a, b) => a - b);
     return sorted[Math.floor(sorted.length / 2)];
 }
+
+// Assignment point: expose the requested business analysis for normalization and long-tail catalog discovery.
 
 function renderAnalysis(itemRecommendations, profileRecommendations, profileMovies) {
     const popularity = getPopularityMap();

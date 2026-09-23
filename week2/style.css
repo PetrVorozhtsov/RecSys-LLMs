@@ -1,3 +1,5 @@
+/* Assignment point: provide a clear, responsive interface for comparing both recommendation approaches. */
+
 * { box-sizing: border-box; }
 
 body {
@@ -32,16 +34,19 @@ button:hover { background: #12558b; }
 .loading { border-left: 5px solid #f6ad55; }
 .success { border-left: 5px solid #38a169; }
 .error { border-left: 5px solid #e53e3e; color: #9b2c2c; }
+/* Assignment point: keep item-to-item and profile-based Top-5 lists comparable. */
 .recommendation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .panel { padding: 22px; }
 .hint { margin: 0 0 12px; color: #627d98; font-size: .92rem; }
 .recommendations { margin: 0; padding-left: 28px; }
 .recommendations li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid #edf2f7; }
 .recommendations strong { color: #1769aa; font-variant-numeric: tabular-nums; }
+/* Assignment point: reserve a readable area for the required business analysis. */
 .analysis { margin-top: 18px; }
 .analysis p { margin: 8px 0; color: #486581; }
 @media (max-width: 700px) {
     body { padding: 12px; }
     header { padding: 22px; }
+    /* Assignment point: keep both recommendation lists usable on small screens. */
     .profile-grid, .recommendation-grid { grid-template-columns: 1fr; }
 }
