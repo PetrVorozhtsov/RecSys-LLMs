@@ -7,21 +7,47 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Content-Based Movie Recommender</h1>
-        <p>Select a movie you like, and we'll find similar ones for you!</p>
-        
-        <div class="controls">
-            <select id="movie-select">
-                <option value="" disabled selected>Select a movie</option>
+    <main class="container">
+        <header>
+            <p class="eyebrow">MovieLens 100K · Content-based filtering</p>
+            <h1>Content-Based Movie Recommender</h1>
+            <p>Compare recommendations from one active movie with recommendations from an aggregated user profile.</p>
+        </header>
+
+        <section class="controls" aria-labelledby="controls-title">
+            <h2 id="controls-title">Build a user profile</h2>
+            <label for="active-movie">Active movie (item-to-item)</label>
+            <select id="active-movie" class="movie-select">
+                <option value="">Loading movies...</option>
             </select>
-            <button id="recommend-btn" onclick="getRecommendations()">Get Recommendations</button>
-        </div>
-        
-        <div id="result-box">
-            <p id="result">Please wait, loading data...</p>
-        </div>
-    </div>
+            <div class="profile-grid">
+                <label>Liked movie 1<select id="profile-movie-1" class="movie-select"></select></label>
+                <label>Liked movie 2<select id="profile-movie-2" class="movie-select"></select></label>
+                <label>Liked movie 3<select id="profile-movie-3" class="movie-select"></select></label>
+            </div>
+            <button id="recommend-btn" onclick="getRecommendations()">Get Top-5 Recommendations</button>
+        </section>
+
+        <p id="result" class="status">Please wait, loading data...</p>
+
+        <section class="recommendation-grid" aria-label="Recommendation comparison">
+            <article class="panel">
+                <h2>Item-to-item</h2>
+                <p class="hint">Cosine similarity to the active movie.</p>
+                <ol id="item-recommendations" class="recommendations"></ol>
+            </article>
+            <article class="panel">
+                <h2>Profile-based</h2>
+                <p class="hint">Cosine similarity to the average of liked movie vectors.</p>
+                <ol id="profile-recommendations" class="recommendations"></ol>
+            </article>
+        </section>
+
+        <section class="analysis panel">
+            <h2>Business and algorithmic analysis</h2>
+            <div id="analysis"><p>Generate recommendations to compare profile coverage and long-tail discovery.</p></div>
+        </section>
+    </main>
 
     <script src="data.js"></script>
     <script src="script.js"></script>
