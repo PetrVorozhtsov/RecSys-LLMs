@@ -1,0 +1,61 @@
+{
+  "dataset": {
+    "users": 943,
+    "movies": 1682,
+    "ratings": 100000
+  },
+  "model": {
+    "minimumCommonRatings": 2,
+    "overlapShrinkage": 10,
+    "predictionPriorWeight": 1,
+    "minimumItemRatings": 5
+  },
+  "split": {
+    "sampledUsers": 50,
+    "heldOutRatings": 250,
+    "trainingRatings": 99750,
+    "ratingsPerUser": 5,
+    "minimumOriginalItemRatings": 10
+  },
+  "quality": {
+    "userBased": {
+      "evaluated": 248,
+      "coverage": 0.992,
+      "mae": 0.838,
+      "rmse": 1.05
+    },
+    "itemBased": {
+      "evaluated": 250,
+      "coverage": 1,
+      "mae": 0.792,
+      "rmse": 0.963
+    },
+    "pairedUserBased": {
+      "evaluated": 248,
+      "coverage": 0.992,
+      "mae": 0.838,
+      "rmse": 1.05
+    },
+    "pairedItemBased": {
+      "evaluated": 248,
+      "coverage": 0.992,
+      "mae": 0.79,
+      "rmse": 0.962
+    }
+  },
+  "timing": {
+    "users": [
+      1,
+      100,
+      196,
+      300,
+      500
+    ],
+    "runtime": "win32 / Node v24.19.0",
+    "medianMilliseconds": {
+      "userBased": 12.586,
+      "itemBasedCold": 351.295,
+      "itemBasedWarm": 56.339
+    }
+  }
+}

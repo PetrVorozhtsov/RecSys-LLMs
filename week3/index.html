@@ -11,7 +11,7 @@
         <header>
             <p class="eyebrow">MovieLens 100K · Collaborative filtering</p>
             <h1>Collaborative Filtering Movie Recommender</h1>
-            <p>Select a user to receive two Top-5 recommendation lists: one from User-Based CF and one from Item-Based CF.</p>
+            <p>Select a user to compare two Top-5 recommendation lists. Scores are predicted ratings on the 1-5 scale; each result shows its supporting evidence.</p>
         </header>
 
         <!-- Assignment point: one active user drives both collaborative-filtering strategies. -->
@@ -32,12 +32,12 @@
         <section id="result-box" class="recommendation-grid" aria-label="Recommendation comparison">
             <article class="panel">
                 <h2>User-Based CF</h2>
-                <p class="hint">Similarity-weighted ratings from the Top-20 nearest users.</p>
+                <p class="hint">Overlap-weighted ratings from the Top-20 nearest users.</p>
                 <div id="user-based-result"><p>Please wait, loading data...</p></div>
             </article>
             <article class="panel">
                 <h2>Item-Based CF</h2>
-                <p class="hint">Similarity-weighted ratings from movies the selected user already rated.</p>
+                <p class="hint">Overlap-weighted matches to rated movies; candidates need at least five community ratings.</p>
                 <div id="item-based-result"><p>Please wait, loading data...</p></div>
             </article>
         </section>
@@ -47,7 +47,7 @@
         <section class="analysis panel">
             <h2>Business and algorithmic analysis</h2>
             <div id="analysis">
-                <p>Generate recommendations to compare quality, efficiency, missing-value handling, and cold-start behavior.</p>
+                <p>Generate recommendations to compare the methods, sparse-rating strategy, efficiency, and cold-start behavior.</p>
             </div>
         </section>
     </main>

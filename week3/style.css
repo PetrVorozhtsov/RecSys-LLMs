@@ -116,6 +116,10 @@ button:hover { background: #12558b; }
 
 .recommendations span { min-width: 0; }
 
+/* Assignment point: expose prediction evidence without hiding long movie titles. */
+.score-evidence { display: flex; flex-direction: column; align-items: flex-end; flex: none; }
+.score-evidence small { color: #627d98; white-space: nowrap; }
+
 .recommendations strong {
     color: #1769aa;
     font-variant-numeric: tabular-nums;

@@ -8,6 +8,8 @@ let ratings = [];
 let numUsers = 0;          // highest user id found in u.data
 let numMovies = 0;         // highest movie id found in u.item
 let ratingMatrix = null;   // (numUsers + 1) x (numMovies + 1); 0 = "not rated"
+let movieRatingCounts = [];
+let globalMeanRating = 0;
 
 // Genre names as defined in the u.item file, excluding the MovieLens "unknown" flag.
 const genreNames = [
@@ -26,7 +28,8 @@ async function loadData() {
         if (!moviesResponse.ok) {
             throw new Error(`Failed to load movie data: ${moviesResponse.status}`);
         }
-        parseItemData(await moviesResponse.text());
+        // Assignment point: preserve MovieLens u.item titles encoded as ISO-8859-1.
+        parseItemData(new TextDecoder('iso-8859-1').decode(await moviesResponse.arrayBuffer()));
 
         const ratingsResponse = await fetch('u.data');
         if (!ratingsResponse.ok) {
@@ -79,7 +82,10 @@ function parseRatingData(text) {
         const rating = Number.parseFloat(fields[2]);
         const timestamp = Number.parseInt(fields[3], 10);
 
-        if ([userId, itemId, rating, timestamp].every(Number.isFinite)) {
+        if (Number.isInteger(userId) && userId > 0 &&
+            Number.isInteger(itemId) && itemId > 0 &&
+            Number.isInteger(rating) && rating >= 1 && rating <= 5 &&
+            Number.isInteger(timestamp)) {
             ratings.push({ userId, itemId, rating, timestamp });
         }
     }
@@ -90,10 +96,18 @@ function parseRatingData(text) {
 
 function buildRatingMatrix() {
     ratingMatrix = Array.from({ length: numUsers + 1 }, () => Array(numMovies + 1).fill(0));
+    movieRatingCounts = Array(numMovies + 1).fill(0);
+    let ratingSum = 0;
+    let ratingCount = 0;
 
     ratings.forEach(({ userId, itemId, rating }) => {
-        if (userId <= numUsers && itemId <= numMovies) {
+        if (userId > 0 && userId <= numUsers && itemId > 0 && itemId <= numMovies) {
             ratingMatrix[userId][itemId] = rating;
+            movieRatingCounts[itemId] += 1;
+            ratingSum += rating;
+            ratingCount += 1;
         }
     });
+    // Assignment point: the training-only mean is a prior for sparse predictions.
+    globalMeanRating = ratingCount > 0 ? ratingSum / ratingCount : 0;
 }
