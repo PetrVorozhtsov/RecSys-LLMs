@@ -1,13 +1,15 @@
-// Global variables for storing movie and rating data
+// Assignment: load MovieLens ratings for collaborative filtering.
+// The same u.item/u.data files are reused from Week 2; only the algorithm changes.
+
 let movies = [];
 let ratings = [];
 
-// Collaborative filtering structures (populated by buildRatingMatrix)
+// Collaborative filtering structures populated by buildRatingMatrix().
 let numUsers = 0;          // highest user id found in u.data
-let numMovies = 0;         // number of parsed movies
+let numMovies = 0;         // highest movie id found in u.item
 let ratingMatrix = null;   // (numUsers + 1) x (numMovies + 1); 0 = "not rated"
 
-// Genre names as defined in the u.item file
+// Genre names as defined in the u.item file, excluding the MovieLens "unknown" flag.
 const genreNames = [
     "Action", "Adventure", "Animation", "Children's", "Comedy",
     "Crime", "Documentary", "Drama", "Fantasy", "Film-Noir",
@@ -15,28 +17,25 @@ const genreNames = [
     "Thriller", "War", "Western"
 ];
 
-// Primary function to load data from files
 async function loadData() {
     try {
-        // Load and parse movie data
+        movies = [];
+        ratings = [];
+
         const moviesResponse = await fetch('u.item');
         if (!moviesResponse.ok) {
             throw new Error(`Failed to load movie data: ${moviesResponse.status}`);
         }
-        const moviesText = await moviesResponse.text();
-        parseItemData(moviesText);
+        parseItemData(await moviesResponse.text());
 
-        // Load and parse rating data
         const ratingsResponse = await fetch('u.data');
         if (!ratingsResponse.ok) {
             throw new Error(`Failed to load rating data: ${ratingsResponse.status}`);
         }
-        const ratingsText = await ratingsResponse.text();
-        parseRatingData(ratingsText);
+        parseRatingData(await ratingsResponse.text());
 
-        // Derive matrix dimensions, then build the rating matrix
-        numUsers = ratings.reduce((max, r) => Math.max(max, r.userId), 0);
-        numMovies = movies.length;
+        numUsers = ratings.reduce((max, rating) => Math.max(max, rating.userId), 0);
+        numMovies = movies.reduce((max, movie) => Math.max(max, movie.id), 0);
         buildRatingMatrix();
     } catch (error) {
         console.error('Error loading data:', error);
@@ -44,63 +43,57 @@ async function loadData() {
         if (errorTarget) {
             errorTarget.innerHTML = `<p class="error">Error: ${error.message}. Please make sure u.item and u.data are in the correct location.</p>`;
         }
-        throw error; // Re-throw so script.js can handle the error
+        throw error;
     }
 }
 
-// Parse movie data from u.item format
 function parseItemData(text) {
-    const lines = text.split('\n');
-
-    for (const line of lines) {
-        if (line.trim() === '') continue;
+    for (const line of text.split(/\r?\n/)) {
+        if (!line.trim()) continue;
 
         const fields = line.split('|');
-        if (fields.length < 5) continue; // Skip invalid lines
+        if (fields.length < 24) continue;
 
-        const id = parseInt(fields[0]);
-        const title = fields[1];
+        const id = Number.parseInt(fields[0], 10);
+        const title = fields[1].trim();
 
-        // Extract genres (last 19 fields)
-        const genreValues = fields.slice(5, 24).map(value => parseInt(value));
+        // Fields 6-23 are the 18 named genres; field 5 is the "unknown" flag.
+        const genreValues = fields.slice(6, 24).map(value => Number.parseInt(value, 10) || 0);
         const genres = genreNames.filter((_, index) => genreValues[index] === 1);
 
-        movies.push({ id, title, genres });
+        if (Number.isInteger(id) && title) {
+            movies.push({ id, title, genres });
+        }
     }
 }
 
-// Parse rating data from u.data format
 function parseRatingData(text) {
-    const lines = text.split('\n');
-
-    for (const line of lines) {
-        if (line.trim() === '') continue;
+    for (const line of text.split(/\r?\n/)) {
+        if (!line.trim()) continue;
 
         const fields = line.split('\t');
-        if (fields.length < 4) continue; // Skip invalid lines
+        if (fields.length < 4) continue;
 
-        const userId = parseInt(fields[0]);
-        const itemId = parseInt(fields[1]);
-        const rating = parseFloat(fields[2]);
-        const timestamp = parseInt(fields[3]);
+        const userId = Number.parseInt(fields[0], 10);
+        const itemId = Number.parseInt(fields[1], 10);
+        const rating = Number.parseFloat(fields[2]);
+        const timestamp = Number.parseInt(fields[3], 10);
 
-        ratings.push({ userId, itemId, rating, timestamp });
+        if ([userId, itemId, rating, timestamp].every(Number.isFinite)) {
+            ratings.push({ userId, itemId, rating, timestamp });
+        }
     }
 }
 
-// ---------------------------------------------------------------------------
-// TODO (HW3) — build the user-item rating matrix.
-//
-// Shape: (numUsers + 1) x (numMovies + 1), indexed by raw id, so that
-//   ratingMatrix[userId][movieId] === rating
-// and a missing entry is 0. MovieLens ratings are 1-5, so 0 is unambiguous.
-//
-// If you adopt a different convention (for example mean imputation, which
-// week3/readme.md section 6 allows), document it here and keep
-// cosineSimilarity in script.js consistent with it.
-//
-// Store the result in the global variable `ratingMatrix`.
-// ---------------------------------------------------------------------------
+// Assignment point: build a sparse-friendly user-item matrix.
+// MovieLens ratings are 1-5, so 0 is an unambiguous "not rated" marker.
+
 function buildRatingMatrix() {
-    // your implementation here
+    ratingMatrix = Array.from({ length: numUsers + 1 }, () => Array(numMovies + 1).fill(0));
+
+    ratings.forEach(({ userId, itemId, rating }) => {
+        if (userId <= numUsers && itemId <= numMovies) {
+            ratingMatrix[userId][itemId] = rating;
+        }
+    });
 }
