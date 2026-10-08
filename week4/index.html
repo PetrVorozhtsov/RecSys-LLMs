@@ -1,51 +1,152 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Two-Tower Movie Recommender</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .controls { margin: 20px 0; }
-        button { padding: 10px 15px; margin: 5px; font-size: 16px; }
-        .status { margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px; }
-        .chart-container { margin: 20px 0; }
-        canvas { border: 1px solid #ccc; }
-        .results { margin: 20px 0; }
-        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .side-by-side { display: flex; gap: 20px; }
-        .side-by-side > div { flex: 1; }
-    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explore association rules mined from UCI Online Retail invoice baskets.">
+    <title>Association Rules Explorer | Week 4</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+    <script src="apriori.js" defer></script>
+    <script src="app.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Two-Tower Movie Recommender</h1>
-        
-        <div class="controls">
-            <button id="loadData">Load Data</button>
-            <button id="train" disabled>Train</button>
-            <button id="test" disabled>Test</button>
-        </div>
-        
-        <div id="status" class="status">Ready to load data...</div>
-        
-        <div class="chart-container">
-            <h3>Training Loss</h3>
-            <canvas id="lossChart" width="800" height="300"></canvas>
-        </div>
-        
-        <div class="chart-container">
-            <h3>Item Embeddings (PCA)</h3>
-            <canvas id="embeddingChart" width="800" height="600"></canvas>
-        </div>
-        
-        <div id="results" class="results"></div>
-    </div>
+    <div class="page-shell">
+        <header class="site-header">
+            <a class="brand" href="../" aria-label="RecSys LLMs home">
+                <span class="brand-mark" aria-hidden="true">R<span>•</span></span>
+                <span>RecSys <strong>Lab</strong></span>
+            </a>
+            <span class="course-label">Week 04 <span aria-hidden="true">/</span> Market basket analysis</span>
+        </header>
 
-    <!-- Load TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
-    <script src="two-tower.js"></script>
-    <script src="app.js"></script>
+        <main>
+            <section class="hero" aria-labelledby="page-title">
+                <div class="hero-copy">
+                    <span class="eyebrow">Market basket patterns, explained</span>
+                    <h1 id="page-title">Association Rules <em>Explorer</em></h1>
+                    <p>See which products appear together in real retail invoices. Change the evidence thresholds, inspect the counts behind each rule, and compare useful signals with misleading ones.</p>
+                    <div class="hero-links">
+                        <a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank" rel="noopener noreferrer">UCI Online Retail <span aria-hidden="true">↗</span></a>
+                        <a href="https://github.com/PetrVorozhtsov/RecSys-LLMs/tree/main/week4" target="_blank" rel="noopener noreferrer">View project <span aria-hidden="true">↗</span></a>
+                    </div>
+                </div>
+                <div class="hero-visual" aria-hidden="true">
+                    <span class="visual-caption">FROM BASKETS TO EVIDENCE</span>
+                    <div class="visual-basket"><span>Invoice</span><i></i><i></i><i></i></div>
+                    <div class="visual-connector"></div>
+                    <div class="visual-rule"><span class="visual-item">A</span><span class="visual-arrow">→</span><span class="visual-item">B</span></div>
+                    <span class="visual-footer">support · confidence · lift</span>
+                </div>
+            </section>
+
+            <!-- Assignment: expose the dataset, transaction definition, and cleaning choices. -->
+            <section class="dataset-panel" aria-labelledby="dataset-title">
+                <div class="dataset-heading">
+                    <span class="status-indicator" id="data-indicator" aria-hidden="true"></span>
+                    <div>
+                        <h2 id="dataset-title">Dataset status</h2>
+                        <p id="status" role="status" aria-live="polite">Loading invoice baskets…</p>
+                    </div>
+                </div>
+                <div class="dataset-facts">
+                    <div><strong id="basket-count">—</strong><span>transactions</span></div>
+                    <div><strong id="item-count">—</strong><span>distinct items</span></div>
+                    <div><strong id="source-label">UCI</strong><span>Online Retail</span></div>
+                </div>
+            </section>
+
+            <div class="workspace-grid">
+                <aside class="control-column" aria-label="Rule mining controls">
+                    <section class="panel control-panel" aria-labelledby="controls-title">
+                        <div class="section-heading">
+                            <span class="section-kicker">01 / Configure</span>
+                            <h2 id="controls-title">Find meaningful rules</h2>
+                            <p>Set the minimum evidence required before a rule is considered.</p>
+                        </div>
+
+                        <div class="control-field">
+                            <div class="control-label"><label for="support-input">Minimum support</label><span id="support-value">1.0%</span></div>
+                            <input type="range" id="support-input" min="0.5" max="10" step="0.1" value="1.0" aria-describedby="support-help">
+                            <div class="range-ends"><span>0.5%</span><span>10%</span></div>
+                            <p class="field-help" id="support-help">A rule's products must appear together in this share of invoices.</p>
+                        </div>
+
+                        <div class="control-field">
+                            <div class="control-label"><label for="confidence-input">Minimum confidence</label><span id="confidence-value">30%</span></div>
+                            <input type="range" id="confidence-input" min="5" max="100" step="1" value="30" aria-describedby="confidence-help">
+                            <div class="range-ends"><span>5%</span><span>100%</span></div>
+                            <p class="field-help" id="confidence-help">Among invoices with A, this share must also contain B.</p>
+                        </div>
+
+                        <div class="preset-group" aria-label="Threshold examples">
+                            <span class="mini-label">Try a scenario</span>
+                            <div class="preset-buttons">
+                                <button type="button" class="preset-button is-active" data-support="1.0" data-confidence="30">Balanced</button>
+                                <button type="button" class="preset-button" data-support="0.5" data-confidence="20">Explore rare</button>
+                                <button type="button" class="preset-button" data-support="2.0" data-confidence="50">High evidence</button>
+                            </div>
+                        </div>
+
+                        <button type="button" id="run-rules" class="button-primary" disabled>Run rules <span aria-hidden="true">→</span></button>
+                        <button type="button" id="run-tests" class="button-secondary">Run tests</button>
+                        <p class="serve-hint">Opening a local file? Run <code>python -m http.server 8000</code> in the project folder and visit <code>localhost:8000/week4/</code>.</p>
+                    </section>
+
+                    <!-- Assignment: explain the selected thresholds and lift filtering. -->
+                    <section class="panel rationale-panel" aria-labelledby="rationale-title">
+                        <span class="section-kicker">Why these filters?</span>
+                        <h2 id="rationale-title">Evidence before action</h2>
+                        <p id="threshold-rationale">Support controls how often products must occur together; confidence controls how often B follows A. Lift above 1 means B is more common with A than in an average basket.</p>
+                        <div class="filter-note"><span class="filter-icon" aria-hidden="true">↑</span><span>Rules meeting the selected thresholds with <strong>lift &gt; 1</strong> are retained. Rejected candidates remain available for comparison.</span></div>
+                    </section>
+
+                    <section class="panel test-panel" aria-labelledby="tests-title">
+                        <div class="small-heading"><h2 id="tests-title">Self-checks</h2><span class="code-mark">//</span></div>
+                        <div id="test-log" class="test-log" role="status" aria-live="polite">Press “Run tests” to check rule metrics against hand-built baskets.</div>
+                    </section>
+                </aside>
+
+                <div class="results-column">
+                    <section class="metric-grid" aria-label="Mining summary">
+                        <div class="metric-card"><span>Frequent itemsets</span><strong id="itemset-count">—</strong><small>at current support</small></div>
+                        <div class="metric-card"><span>Retained rules</span><strong id="retained-count">—</strong><small>confidence met · lift &gt; 1</small></div>
+                        <div class="metric-card"><span>Rejected candidates</span><strong id="rejected-count">—</strong><small>inspect weak signals</small></div>
+                    </section>
+
+                    <!-- Assignment: compare retained lift>1 rules against candidates worth rejecting. -->
+                    <section class="panel rules-panel" aria-labelledby="rules-title">
+                        <div class="results-heading">
+                            <div><span class="section-kicker">02 / Explore</span><h2 id="rules-title">Discovered rules</h2></div>
+                            <span class="results-context" id="results-context">Load data to begin</span>
+                        </div>
+                        <div class="results-tools">
+                            <div class="tabs" role="tablist" aria-label="Rule category">
+                                <button type="button" id="retained-tab" class="tab is-active" role="tab" aria-selected="true" aria-controls="rule-list">Retained <span id="retained-tab-count">0</span></button>
+                                <button type="button" id="rejected-tab" class="tab" role="tab" aria-selected="false" aria-controls="rule-list">Rejected <span id="rejected-tab-count">0</span></button>
+                            </div>
+                            <label class="search-label"><span class="sr-only">Search rules by product or code</span><input id="rule-search" type="search" placeholder="Search products" autocomplete="off"></label>
+                        </div>
+                        <div id="rule-list" class="rule-list" role="tabpanel" aria-labelledby="retained-tab">
+                            <div class="empty-state"><span class="empty-symbol" aria-hidden="true">◇</span><h3>Ready for discovery</h3><p>Choose thresholds and run the rule miner to see associations in the retail baskets.</p></div>
+                        </div>
+                        <p class="list-footnote" id="list-footnote"></p>
+                    </section>
+
+                    <!-- Assignment: reveal transaction counts and support, confidence, lift for a selected rule. -->
+                    <section class="panel detail-panel" aria-labelledby="detail-title">
+                        <div class="results-heading"><div><span class="section-kicker">03 / Inspect</span><h2 id="detail-title">Selected rule</h2></div><span class="detail-tag" id="detail-tag">No selection</span></div>
+                        <div id="rule-detail" class="detail-empty">Select a rule above to see the counts and formulas behind its metrics.</div>
+                    </section>
+                </div>
+            </div>
+
+            <section class="method-note" aria-labelledby="method-title">
+                <div><span class="section-kicker">Method note</span><h2 id="method-title">Association is a clue, not a cause.</h2></div>
+                <p id="method-copy">Each invoice is one transaction. Products are identified by StockCode and labelled with Description. A high lift points to an unusual co-occurrence; it does not prove a bundle or promotion will increase sales.</p>
+            </section>
+        </main>
+        <footer class="site-footer"><span>Week 04 · Association Rules</span><span>Student project · Petr Vorozhtsov</span></footer>
+    </div>
 </body>
 </html>

@@ -1,479 +1,381 @@
-class MovieLensApp {
-    constructor() {
-        this.interactions = [];
-        this.items = new Map();
-        this.userMap = new Map();
-        this.itemMap = new Map();
-        this.reverseUserMap = new Map();
-        this.reverseItemMap = new Map();
-        this.userTopRated = new Map();
-        this.model = null;
-        
-        this.config = {
-            maxInteractions: 80000,
-            embeddingDim: 32,
-            batchSize: 512,
-            epochs: 20,
-            learningRate: 0.001
+/* Week 4 interface for transaction-based association-rule exploration. */
+(() => {
+    "use strict";
+
+    const state = {
+        data: null,
+        result: null,
+        rejected: [],
+        activeTab: "retained",
+        selectedKey: null,
+        running: false,
+        rerunRequested: false,
+        lastOptions: null,
+    };
+    const numberFormatter = new Intl.NumberFormat("en-US");
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, (character) => ({
+            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+        })[character]);
+    }
+
+    function formatCount(value) {
+        return numberFormatter.format(Number(value) || 0);
+    }
+
+    function formatPercent(value) {
+        const percent = Number(value) * 100;
+        return `${percent < 1 ? percent.toFixed(2) : percent.toFixed(1)}%`;
+    }
+
+    function formatLift(value) {
+        return `${Number(value).toFixed(2)}×`;
+    }
+
+    function ruleKey(rule) {
+        return `${JSON.stringify(rule.antecedent)}→${JSON.stringify(rule.consequent)}`;
+    }
+
+    function itemName(code) {
+        const description = state.data && state.data.items && state.data.items[code];
+        return description || String(code);
+    }
+
+    function itemNames(codes) {
+        return codes.map(itemName).join(" + ");
+    }
+
+    function ruleCodes(rule) {
+        return `${rule.antecedent.join(" + ")} → ${rule.consequent.join(" + ")}`;
+    }
+
+    function ruleTitle(rule) {
+        return `${itemNames(rule.antecedent)} → ${itemNames(rule.consequent)}`;
+    }
+
+    function currentOptions() {
+        return {
+            minSupport: Number($("support-input").value) / 100,
+            minConfidence: Number($("confidence-input").value) / 100,
+            maxSize: 10,
         };
-        
-        this.lossHistory = [];
-        this.isTraining = false;
-        
-        this.initializeUI();
     }
-    
-    initializeUI() {
-        document.getElementById('loadData').addEventListener('click', () => this.loadData());
-        document.getElementById('train').addEventListener('click', () => this.train());
-        document.getElementById('test').addEventListener('click', () => this.test());
-        
-        this.updateStatus('Click "Load Data" to start');
+
+    function setStatus(message, kind = "working") {
+        $("status").textContent = message;
+        $("data-indicator").className = `status-indicator ${kind === "ready" ? "is-ready" : kind === "error" ? "is-error" : ""}`;
     }
-    
-    async loadData() {
-        this.updateStatus('Loading data...');
-        
-        try {
-            // Load interactions
-            const interactionsResponse = await fetch('data/u.data');
-            const interactionsText = await interactionsResponse.text();
-            const interactionsLines = interactionsText.trim().split('\n');
-            
-            this.interactions = interactionsLines.slice(0, this.config.maxInteractions).map(line => {
-                const [userId, itemId, rating, timestamp] = line.split('\t');
-                return {
-                    userId: parseInt(userId),
-                    itemId: parseInt(itemId),
-                    rating: parseFloat(rating),
-                    timestamp: parseInt(timestamp)
-                };
-            });
-            
-            // Load items
-            const itemsResponse = await fetch('data/u.item');
-            const itemsText = await itemsResponse.text();
-            const itemsLines = itemsText.trim().split('\n');
-            
-            itemsLines.forEach(line => {
-                const parts = line.split('|');
-                const itemId = parseInt(parts[0]);
-                const title = parts[1];
-                const yearMatch = title.match(/\((\d{4})\)$/);
-                const year = yearMatch ? parseInt(yearMatch[1]) : null;
-                
-                this.items.set(itemId, {
-                    title: title.replace(/\(\d{4}\)$/, '').trim(),
-                    year: year
-                });
-            });
-            
-            // Create mappings and find users with sufficient ratings
-            this.createMappings();
-            this.findQualifiedUsers();
-            
-            this.updateStatus(`Loaded ${this.interactions.length} interactions and ${this.items.size} items. ${this.userTopRated.size} users have 20+ ratings.`);
-            
-            document.getElementById('train').disabled = false;
-            
-        } catch (error) {
-            this.updateStatus(`Error loading data: ${error.message}`);
+
+    // Assignment: make the chosen support and confidence cutoffs explicit and justified.
+    function updateThresholdExplanation() {
+        const options = currentOptions();
+        const supportPct = formatPercent(options.minSupport);
+        const confidencePct = formatPercent(options.minConfidence);
+        $("support-value").textContent = supportPct;
+        $("confidence-value").textContent = confidencePct;
+        const minimum = state.data ? Math.max(1, Math.ceil(options.minSupport * state.data.baskets.length - 1e-10)) : null;
+        const countText = minimum === null ? "" : ` (at least ${formatCount(minimum)} of ${formatCount(state.data.baskets.length)} invoices)`;
+        $("threshold-rationale").textContent =
+            `At ${supportPct} support${countText}, a rule needs enough joint transactions to be credible. ` +
+            `At ${confidencePct} confidence, B must occur in at least that share of baskets containing A. ` +
+            `Lower thresholds reveal rarer patterns but add noise and computation; higher thresholds require stronger evidence. ` +
+            `Only lift above 1 is retained for further analysis.`;
+
+        for (const button of document.querySelectorAll(".preset-button")) {
+            const match = Number(button.dataset.support) === Number($("support-input").value) &&
+                Number(button.dataset.confidence) === Number($("confidence-input").value);
+            button.classList.toggle("is-active", match);
+        }
+
+        if (state.result && state.lastOptions &&
+            (options.minSupport !== state.lastOptions.minSupport || options.minConfidence !== state.lastOptions.minConfidence)) {
+            $("results-context").textContent = "Thresholds changed · press Run rules";
         }
     }
-    
-    createMappings() {
-        // Create user and item mappings to 0-based indices
-        const userSet = new Set(this.interactions.map(i => i.userId));
-        const itemSet = new Set(this.interactions.map(i => i.itemId));
-        
-        Array.from(userSet).forEach((userId, index) => {
-            this.userMap.set(userId, index);
-            this.reverseUserMap.set(index, userId);
-        });
-        
-        Array.from(itemSet).forEach((itemId, index) => {
-            this.itemMap.set(itemId, index);
-            this.reverseItemMap.set(index, itemId);
-        });
-        
-        // Group interactions by user and find top rated movies
-        const userInteractions = new Map();
-        this.interactions.forEach(interaction => {
-            const userId = interaction.userId;
-            if (!userInteractions.has(userId)) {
-                userInteractions.set(userId, []);
-            }
-            userInteractions.get(userId).push(interaction);
-        });
-        
-        // Sort each user's interactions by rating (desc) and timestamp (desc)
-        userInteractions.forEach((interactions, userId) => {
-            interactions.sort((a, b) => {
-                if (b.rating !== a.rating) return b.rating - a.rating;
-                return b.timestamp - a.timestamp;
-            });
-        });
-        
-        this.userTopRated = userInteractions;
-    }
-    
-    findQualifiedUsers() {
-        // Filter users with at least 20 ratings
-        const qualifiedUsers = [];
-        this.userTopRated.forEach((interactions, userId) => {
-            if (interactions.length >= 20) {
-                qualifiedUsers.push(userId);
-            }
-        });
-        this.qualifiedUsers = qualifiedUsers;
-    }
-    
-    async train() {
-        if (this.isTraining) return;
-        
-        this.isTraining = true;
-        document.getElementById('train').disabled = true;
-        this.lossHistory = [];
-        
-        this.updateStatus('Initializing model...');
-        
-        // Initialize model
-        this.model = new TwoTowerModel(
-            this.userMap.size,
-            this.itemMap.size,
-            this.config.embeddingDim
-        );
-        
-        // Prepare training data
-        const userIndices = this.interactions.map(i => this.userMap.get(i.userId));
-        const itemIndices = this.interactions.map(i => this.itemMap.get(i.itemId));
-        
-        this.updateStatus('Starting training...');
-        
-        // Training loop
-        const numBatches = Math.ceil(userIndices.length / this.config.batchSize);
-        
-        for (let epoch = 0; epoch < this.config.epochs; epoch++) {
-            let epochLoss = 0;
-            
-            for (let batch = 0; batch < numBatches; batch++) {
-                const start = batch * this.config.batchSize;
-                const end = Math.min(start + this.config.batchSize, userIndices.length);
-                
-                const batchUsers = userIndices.slice(start, end);
-                const batchItems = itemIndices.slice(start, end);
-                
-                const loss = await this.model.trainStep(batchUsers, batchItems);
-                epochLoss += loss;
-                
-                this.lossHistory.push(loss);
-                this.updateLossChart();
-                
-                if (batch % 10 === 0) {
-                    this.updateStatus(`Epoch ${epoch + 1}/${this.config.epochs}, Batch ${batch}/${numBatches}, Loss: ${loss.toFixed(4)}`);
-                }
-                
-                // Allow UI to update
-                await new Promise(resolve => setTimeout(resolve, 0));
-            }
-            
-            epochLoss /= numBatches;
-            this.updateStatus(`Epoch ${epoch + 1}/${this.config.epochs} completed. Average loss: ${epochLoss.toFixed(4)}`);
+
+    function setActiveTab(tab) {
+        state.activeTab = tab;
+        for (const name of ["retained", "rejected"]) {
+            const button = $(`${name}-tab`);
+            const active = name === tab;
+            button.classList.toggle("is-active", active);
+            button.setAttribute("aria-selected", String(active));
         }
-        
-        this.isTraining = false;
-        document.getElementById('train').disabled = false;
-        document.getElementById('test').disabled = false;
-        
-        this.updateStatus('Training completed! Click "Test" to see recommendations.');
-        
-        // Visualize embeddings
-        this.visualizeEmbeddings();
+        $("rule-list").setAttribute("aria-labelledby", `${tab}-tab`);
+        state.selectedKey = null;
+        renderList();
+        renderDetail();
     }
-    
-    updateLossChart() {
-        const canvas = document.getElementById('lossChart');
-        const ctx = canvas.getContext('2d');
-        
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        if (this.lossHistory.length === 0) return;
-        
-        const maxLoss = Math.max(...this.lossHistory);
-        const minLoss = Math.min(...this.lossHistory);
-        const range = maxLoss - minLoss || 1;
-        
-        ctx.strokeStyle = '#007acc';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        
-        this.lossHistory.forEach((loss, index) => {
-            const x = (index / this.lossHistory.length) * canvas.width;
-            const y = canvas.height - ((loss - minLoss) / range) * canvas.height;
-            
-            if (index === 0) {
-                ctx.moveTo(x, y);
-            } else {
-                ctx.lineTo(x, y);
-            }
-        });
-        
-        ctx.stroke();
-        
-        // Add labels
-        ctx.fillStyle = '#000';
-        ctx.font = '12px Arial';
-        ctx.fillText(`Min: ${minLoss.toFixed(4)}`, 10, canvas.height - 10);
-        ctx.fillText(`Max: ${maxLoss.toFixed(4)}`, 10, 20);
+
+    function emptyState(title, description) {
+        $("rule-list").innerHTML = `<div class="empty-state"><span class="empty-symbol" aria-hidden="true">◇</span><h3>${escapeHTML(title)}</h3><p>${escapeHTML(description)}</p></div>`;
+        $("list-footnote").textContent = "";
     }
-    
-    async visualizeEmbeddings() {
-        if (!this.model) return;
-        
-        this.updateStatus('Computing embedding visualization...');
-        
-        const canvas = document.getElementById('embeddingChart');
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        try {
-            // Sample items for visualization
-            const sampleSize = Math.min(500, this.itemMap.size);
-            const sampleIndices = Array.from({length: sampleSize}, (_, i) => 
-                Math.floor(i * this.itemMap.size / sampleSize)
-            );
-            
-            // Get embeddings and compute PCA
-            const embeddingsTensor = this.model.getItemEmbeddings();
-            const embeddings = embeddingsTensor.arraySync();
-            const sampleEmbeddings = sampleIndices.map(i => embeddings[i]);
-            
-            const projected = this.computePCA(sampleEmbeddings, 2);
-            
-            // Normalize to canvas coordinates
-            const xs = projected.map(p => p[0]);
-            const ys = projected.map(p => p[1]);
-            
-            const xMin = Math.min(...xs);
-            const xMax = Math.max(...xs);
-            const yMin = Math.min(...ys);
-            const yMax = Math.max(...ys);
-            
-            const xRange = xMax - xMin || 1;
-            const yRange = yMax - yMin || 1;
-            
-            // Draw points
-            ctx.fillStyle = 'rgba(0, 122, 204, 0.6)';
-            sampleIndices.forEach((itemIdx, i) => {
-                const x = ((projected[i][0] - xMin) / xRange) * (canvas.width - 40) + 20;
-                const y = ((projected[i][1] - yMin) / yRange) * (canvas.height - 40) + 20;
-                
-                ctx.beginPath();
-                ctx.arc(x, y, 3, 0, 2 * Math.PI);
-                ctx.fill();
-            });
-            
-            // Add title and labels
-            ctx.fillStyle = '#000';
-            ctx.font = '14px Arial';
-            ctx.fillText('Item Embeddings Projection (PCA)', 10, 20);
-            ctx.font = '12px Arial';
-            ctx.fillText(`Showing ${sampleSize} items`, 10, 40);
-            
-            this.updateStatus('Embedding visualization completed.');
-        } catch (error) {
-            this.updateStatus(`Error in visualization: ${error.message}`);
-        }
+
+    function visibleRules() {
+        return state.activeTab === "retained" ? state.result.rules : state.rejected;
     }
-    
-    computePCA(embeddings, dimensions) {
-        // Simple PCA using power iteration
-        const n = embeddings.length;
-        const dim = embeddings[0].length;
-        
-        // Center the data
-        const mean = Array(dim).fill(0);
-        embeddings.forEach(emb => {
-            emb.forEach((val, i) => mean[i] += val);
-        });
-        mean.forEach((val, i) => mean[i] = val / n);
-        
-        const centered = embeddings.map(emb => 
-            emb.map((val, i) => val - mean[i])
-        );
-        
-        // Compute covariance matrix
-        const covariance = Array(dim).fill(0).map(() => Array(dim).fill(0));
-        centered.forEach(emb => {
-            for (let i = 0; i < dim; i++) {
-                for (let j = 0; j < dim; j++) {
-                    covariance[i][j] += emb[i] * emb[j];
-                }
-            }
-        });
-        covariance.forEach(row => row.forEach((val, j) => row[j] = val / n));
-        
-        // Power iteration for first two components
-        const components = [];
-        for (let d = 0; d < dimensions; d++) {
-            let vector = Array(dim).fill(1/Math.sqrt(dim));
-            
-            for (let iter = 0; iter < 10; iter++) {
-                let newVector = Array(dim).fill(0);
-                
-                for (let i = 0; i < dim; i++) {
-                    for (let j = 0; j < dim; j++) {
-                        newVector[i] += covariance[i][j] * vector[j];
-                    }
-                }
-                
-                const norm = Math.sqrt(newVector.reduce((sum, val) => sum + val * val, 0));
-                vector = newVector.map(val => val / norm);
-            }
-            
-            components.push(vector);
-            
-            // Deflate the covariance matrix
-            for (let i = 0; i < dim; i++) {
-                for (let j = 0; j < dim; j++) {
-                    covariance[i][j] -= vector[i] * vector[j];
-                }
-            }
-        }
-        
-        // Project data
-        return embeddings.map(emb => {
-            return components.map(comp => 
-                emb.reduce((sum, val, i) => sum + val * comp[i], 0)
-            );
-        });
+
+    function rejectionReason(rule) {
+        const belowConfidence = rule.confidence + 1e-12 < state.lastOptions.minConfidence;
+        const lowLift = rule.lift <= 1 + 1e-12;
+        if (belowConfidence && lowLift) return "Below confidence threshold and no positive lift";
+        if (belowConfidence) return "Below confidence threshold";
+        if (lowLift) return "Lift does not exceed baseline";
+        return "Does not pass the retained-rule filter";
     }
-    
-    async test() {
-        if (!this.model || this.qualifiedUsers.length === 0) {
-            this.updateStatus('Model not trained or no qualified users found.');
+
+    // Assignment: show both lift>1 discoveries and rejected candidates for comparison.
+    function renderList() {
+        if (!state.result) return;
+        const search = $("rule-search").value.trim().toLowerCase();
+        const exactPair = search.match(/^([^\s]+)\s*(?:→|->)\s*([^\s]+)$/);
+        const terms = search.split(/\s+/).filter(Boolean);
+        const pool = visibleRules();
+        const matching = exactPair ? pool.filter((rule) =>
+            rule.antecedent.length === 1 && rule.consequent.length === 1 &&
+            rule.antecedent[0].toLowerCase() === exactPair[1] &&
+            rule.consequent[0].toLowerCase() === exactPair[2]) :
+            terms.length ? pool.filter((rule) => {
+                const searchable = `${ruleTitle(rule)} ${ruleCodes(rule)}`.toLowerCase();
+                return terms.every((term) => searchable.includes(term));
+            }) : pool;
+        if (!matching.length) {
+            emptyState(terms.length ? "No matching rules" : "No rules in this view",
+                terms.length ? "Try another product name or StockCode." :
+                    "Try a lower threshold or inspect the other rule category.");
             return;
         }
-        
-        this.updateStatus('Generating recommendations...');
-        
+
+        const displayed = matching.slice(0, 60);
+        $("rule-list").innerHTML = displayed.map((rule) => {
+            const key = ruleKey(rule);
+            const isSelected = key === state.selectedKey;
+            const labelA = escapeHTML(itemNames(rule.antecedent));
+            const labelB = escapeHTML(itemNames(rule.consequent));
+            const reason = state.activeTab === "rejected" ? rejectionReason(rule) : "StockCode " + ruleCodes(rule);
+            return `<button type="button" class="rule-row${isSelected ? " is-selected" : ""}" data-rule-key="${escapeHTML(key)}" aria-pressed="${isSelected}" title="${escapeHTML(ruleTitle(rule))}">` +
+                `<span class="rule-name"><strong>${labelA}<span class="arrow">→</span>${labelB}</strong><small>${escapeHTML(reason)}</small></span>` +
+                `<span class="rule-stat">${formatPercent(rule.support)}<small>support</small></span>` +
+                `<span class="rule-stat">${formatPercent(rule.confidence)}<small>confidence</small></span>` +
+                `<span class="rule-stat ${rule.lift > 1 ? "lift-good" : "lift-poor"}">${formatLift(rule.lift)}<small>lift</small></span></button>`;
+        }).join("");
+        $("list-footnote").textContent = `Showing ${formatCount(displayed.length)} of ${formatCount(matching.length)} ${state.activeTab} candidates. Select a row for the full calculation.`;
+    }
+
+    // Assignment: expose N, nA, nB, nAB and the formulas behind each rule metric.
+    function renderDetail() {
+        const tag = $("detail-tag");
+        const detail = $("rule-detail");
+        const selected = state.result && visibleRules().find((rule) => ruleKey(rule) === state.selectedKey);
+        if (!selected) {
+            tag.textContent = "No selection";
+            tag.className = "detail-tag";
+            detail.className = "detail-empty";
+            detail.textContent = "Select a rule above to see the counts and formulas behind its metrics.";
+            return;
+        }
+
+        const rejected = state.activeTab === "rejected";
+        tag.textContent = rejected ? "Rejected candidate" : "Retained rule";
+        tag.className = `detail-tag ${rejected ? "is-rejected" : "is-retained"}`;
+        detail.className = "";
+        const N = state.result.N;
+        const baseline = selected.nB / N;
+        const explanation = rejected ?
+            `${rejectionReason(selected)}. This association should not be promoted as evidence for a cross-sell without further investigation.` :
+            `B occurs in ${formatPercent(baseline)} of all baskets but in ${formatPercent(selected.confidence)} of baskets containing A. The positive lift is a discovery signal, not causal proof.`;
+        detail.innerHTML =
+            `<h3 class="detail-rule">${escapeHTML(itemNames(selected.antecedent))}<span class="arrow">→</span>${escapeHTML(itemNames(selected.consequent))}</h3>` +
+            `<p class="detail-codes">StockCodes: ${escapeHTML(ruleCodes(selected))}</p>` +
+            `<div class="detail-grid">` +
+            `<div class="detail-count"><span>N · all invoices</span><strong>${formatCount(N)}</strong></div>` +
+            `<div class="detail-count"><span>nA · contain A</span><strong>${formatCount(selected.nA)}</strong></div>` +
+            `<div class="detail-count"><span>nB · contain B</span><strong>${formatCount(selected.nB)}</strong></div>` +
+            `<div class="detail-count"><span>nAB · contain both</span><strong>${formatCount(selected.nAB)}</strong></div></div>` +
+            `<div class="formula-grid">` +
+            `<div class="formula-card"><span>Support</span><strong>${formatPercent(selected.support)}</strong><small>nAB / N = ${formatCount(selected.nAB)} / ${formatCount(N)}</small></div>` +
+            `<div class="formula-card"><span>Confidence</span><strong>${formatPercent(selected.confidence)}</strong><small>nAB / nA = ${formatCount(selected.nAB)} / ${formatCount(selected.nA)}</small></div>` +
+            `<div class="formula-card"><span>Lift</span><strong>${formatLift(selected.lift)}</strong><small>confidence / (nB / N)</small></div></div>` +
+            `<p class="interpretation${rejected ? " is-rejected" : ""}">${escapeHTML(explanation)}</p>`;
+    }
+
+    function displayResult(result, options) {
+        if (!result || !Array.isArray(result.rules) || !Array.isArray(result.candidates)) {
+            throw new Error("The mining result does not include rule lists.");
+        }
+        state.result = result;
+        state.lastOptions = options;
+        const retainedKeys = new Set(result.rules.map(ruleKey));
+        const lowLift = [];
+        const lowConfidence = [];
+        for (const candidate of result.candidates) {
+            if (!retainedKeys.has(ruleKey(candidate))) {
+                // High-confidence rules with lift<=1 make the misleading-rule lesson clearest.
+                (candidate.confidence >= options.minConfidence && candidate.lift <= 1 ? lowLift : lowConfidence).push(candidate);
+            }
+        }
+        lowLift.sort((left, right) => right.confidence - left.confidence || right.support - left.support);
+        lowConfidence.sort((left, right) => right.support - left.support || right.confidence - left.confidence);
+        state.rejected = lowLift.concat(lowConfidence);
+        state.selectedKey = null;
+
+        $("itemset-count").textContent = formatCount(result.itemsets.length);
+        $("retained-count").textContent = formatCount(result.rules.length);
+        $("rejected-count").textContent = formatCount(state.rejected.length);
+        $("retained-tab-count").textContent = formatCount(result.rules.length);
+        $("rejected-tab-count").textContent = formatCount(state.rejected.length);
+        $("results-context").textContent = `${formatPercent(options.minSupport)} support · ${formatPercent(options.minConfidence)} confidence`;
+        $("rule-search").value = "";
+        state.activeTab = "retained";
+        $("retained-tab").classList.add("is-active");
+        $("retained-tab").setAttribute("aria-selected", "true");
+        $("rejected-tab").classList.remove("is-active");
+        $("rejected-tab").setAttribute("aria-selected", "false");
+        $("rule-list").setAttribute("aria-labelledby", "retained-tab");
+        renderList();
+        renderDetail();
+    }
+
+    async function runRules() {
+        if (state.running) {
+            state.rerunRequested = true;
+            return;
+        }
+        if (!state.data) return;
+        if (!globalThis.AssociationRules || typeof AssociationRules.mine !== "function") {
+            setStatus("Rule miner is unavailable. Check that apriori.js was loaded.", "error");
+            return;
+        }
+        const options = currentOptions();
+        state.running = true;
+        $("run-rules").disabled = true;
+        setStatus("Mining frequent itemsets and evaluating directional rules…");
+        // Yield a frame so the busy state becomes visible before synchronous Apriori work.
+        await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
         try {
-            // Pick random qualified user
-            const randomUser = this.qualifiedUsers[Math.floor(Math.random() * this.qualifiedUsers.length)];
-            const userInteractions = this.userTopRated.get(randomUser);
-            const userIndex = this.userMap.get(randomUser);
-            
-            // Get user embedding
-            const userEmb = this.model.getUserEmbedding(userIndex);
-            
-            // Get scores for all items
-            const allItemScores = await this.model.getScoresForAllItems(userEmb);
-            
-            // Filter out items the user has already rated
-            const ratedItemIds = new Set(userInteractions.map(i => i.itemId));
-            const candidateScores = [];
-            
-            allItemScores.forEach((score, itemIndex) => {
-                const itemId = this.reverseItemMap.get(itemIndex);
-                if (!ratedItemIds.has(itemId)) {
-                    candidateScores.push({ itemId, score, itemIndex });
-                }
-            });
-            
-            // Sort by score descending and take top 10
-            candidateScores.sort((a, b) => b.score - a.score);
-            const topRecommendations = candidateScores.slice(0, 10);
-            
-            // Display results
-            this.displayResults(randomUser, userInteractions, topRecommendations);
-            
+            const started = performance.now();
+            const result = AssociationRules.mine(state.data.baskets, options);
+            displayResult(result, options);
+            const seconds = ((performance.now() - started) / 1000).toFixed(1);
+            setStatus(`Ready: ${formatCount(result.N)} invoices analysed in ${seconds}s. Select a rule to inspect its evidence.`, "ready");
         } catch (error) {
-            this.updateStatus(`Error generating recommendations: ${error.message}`);
+            console.error(error);
+            setStatus(`Could not mine rules: ${error.message}`, "error");
+        } finally {
+            state.running = false;
+            $("run-rules").disabled = false;
+            if (state.rerunRequested) {
+                state.rerunRequested = false;
+                runRules();
+            }
         }
     }
-    
-    displayResults(userId, userInteractions, recommendations) {
-        const resultsDiv = document.getElementById('results');
-        
-        const topRated = userInteractions.slice(0, 10);
-        
-        let html = `
-            <h2>Recommendations for User ${userId}</h2>
-            <div class="side-by-side">
-                <div>
-                    <h3>Top 10 Rated Movies (Historical)</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Movie</th>
-                                <th>Rating</th>
-                                <th>Year</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
-        
-        topRated.forEach((interaction, index) => {
-            const item = this.items.get(interaction.itemId);
-            html += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${item.title}</td>
-                    <td>${interaction.rating}</td>
-                    <td>${item.year || 'N/A'}</td>
-                </tr>
-            `;
-        });
-        
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    <h3>Top 10 Recommended Movies</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Movie</th>
-                                <th>Score</th>
-                                <th>Year</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
-        
-        recommendations.forEach((rec, index) => {
-            const item = this.items.get(rec.itemId);
-            html += `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${item.title}</td>
-                    <td>${rec.score.toFixed(4)}</td>
-                    <td>${item.year || 'N/A'}</td>
-                </tr>
-            `;
-        });
-        
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-        
-        resultsDiv.innerHTML = html;
-        this.updateStatus('Recommendations generated successfully!');
-    }
-    
-    updateStatus(message) {
-        document.getElementById('status').textContent = message;
-    }
-}
 
-// Initialize app when page loads
-let app;
-document.addEventListener('DOMContentLoaded', () => {
-    app = new MovieLensApp();
-});
+    // Assignment: self-check support, confidence, lift and lift>1 filtering on known baskets.
+    function runTests() {
+        if (!globalThis.AssociationRules || typeof AssociationRules.mine !== "function") {
+            $("test-log").textContent = "FAIL · apriori.js is not available.";
+            return;
+        }
+        const fixture = [
+            ["bread", "milk", "jam"],
+            ["bread", "milk", "jam"],
+            ["bread", "milk", "eggs"],
+            ["bread", "jam", "eggs"],
+            ["bread"],
+        ];
+        const checks = [];
+        function check(label, condition) { checks.push(`${condition ? "PASS" : "FAIL"} · ${label}`); }
+        function close(actual, expected) { return Math.abs(actual - expected) < 1e-10; }
+        try {
+            const result = AssociationRules.mine(fixture, { minSupport: .2, minConfidence: .1, maxSize: 3 });
+            const find = (a, b) => result.candidates.find((rule) =>
+                rule.antecedent.length === 1 && rule.antecedent[0] === a &&
+                rule.consequent.length === 1 && rule.consequent[0] === b);
+            const breadMilk = find("bread", "milk");
+            const milkJam = find("milk", "jam");
+            const jamEggs = find("jam", "eggs");
+            check("Five invoices are the denominator", result.N === 5);
+            check("Bread → milk: 3/5 support, 3/5 confidence, lift 1",
+                !!breadMilk && breadMilk.nA === 5 && breadMilk.nB === 3 && breadMilk.nAB === 3 &&
+                close(breadMilk.support, .6) && close(breadMilk.confidence, .6) && close(breadMilk.lift, 1));
+            check("Milk → jam: 2/5 support, 2/3 confidence, 10/9 lift",
+                !!milkJam && milkJam.nA === 3 && milkJam.nB === 3 && milkJam.nAB === 2 &&
+                close(milkJam.support, .4) && close(milkJam.confidence, 2 / 3) && close(milkJam.lift, 10 / 9));
+            check("Jam → eggs: 1/5 support, 1/3 confidence, 5/6 lift",
+                !!jamEggs && jamEggs.nAB === 1 && close(jamEggs.support, .2) &&
+                close(jamEggs.confidence, 1 / 3) && close(jamEggs.lift, 5 / 6));
+            check("Only positive-lift rules are retained",
+                result.rules.some((rule) => ruleKey(rule) === ruleKey(milkJam)) &&
+                !result.rules.some((rule) => ruleKey(rule) === ruleKey(breadMilk)));
+        } catch (error) {
+            checks.push(`FAIL · ${error.message}`);
+        }
+        const passing = checks.filter((line) => line.startsWith("PASS")).length;
+        $("test-log").textContent = `${passing}/${checks.length} checks passed\n${checks.join("\n")}`;
+        $("test-log").classList.toggle("has-failures", passing !== checks.length);
+    }
+
+    async function loadData() {
+        try {
+            const response = await fetch("data/baskets.json");
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            if (!data || !Array.isArray(data.baskets) || !data.baskets.length ||
+                !data.items || typeof data.items !== "object") {
+                throw new Error("baskets.json has an unexpected structure");
+            }
+            state.data = data;
+            $("basket-count").textContent = formatCount(data.baskets.length);
+            $("item-count").textContent = formatCount(Object.keys(data.items).length);
+            $("source-label").textContent = data.source && data.source.name ? "UCI" : "Retail";
+            const preprocessing = data.preprocessing || {};
+            const dateRange = preprocessing.first_date && preprocessing.last_date ?
+                ` The retained invoices span ${preprocessing.first_date} to ${preprocessing.last_date}.` : "";
+            const method = typeof preprocessing === "string" ? preprocessing : preprocessing.method;
+            $("method-copy").textContent = `${method || "Each InvoiceNo is one transaction. StockCode identifies an item, and Description labels it."}${dateRange} A high lift points to an unusual co-occurrence; it does not prove a promotion will increase sales.`;
+            updateThresholdExplanation();
+            $("run-rules").disabled = false;
+            setStatus(`Loaded ${formatCount(data.baskets.length)} invoice baskets and ${formatCount(Object.keys(data.items).length)} product codes.`, "ready");
+            // Default scenario is calculated immediately; presets make later parameter comparisons repeatable.
+            runRules();
+        } catch (error) {
+            console.error(error);
+            const hint = location.protocol === "file:" ? " Serve the repository over HTTP instead of opening file://." : "";
+            setStatus(`Could not load data/baskets.json: ${error.message}.${hint}`, "error");
+            emptyState("Dataset unavailable", "Serve the project over HTTP and confirm data/baskets.json exists.");
+        }
+    }
+
+    function initialize() {
+        $("support-input").addEventListener("input", updateThresholdExplanation);
+        $("confidence-input").addEventListener("input", updateThresholdExplanation);
+        for (const button of document.querySelectorAll(".preset-button")) {
+            button.addEventListener("click", () => {
+                $("support-input").value = button.dataset.support;
+                $("confidence-input").value = button.dataset.confidence;
+                updateThresholdExplanation();
+                if (state.data) runRules();
+            });
+        }
+        $("run-rules").addEventListener("click", runRules);
+        $("run-tests").addEventListener("click", runTests);
+        $("retained-tab").addEventListener("click", () => setActiveTab("retained"));
+        $("rejected-tab").addEventListener("click", () => setActiveTab("rejected"));
+        $("rule-search").addEventListener("input", renderList);
+        $("rule-list").addEventListener("click", (event) => {
+            const row = event.target.closest(".rule-row");
+            if (!row || !state.result) return;
+            state.selectedKey = row.dataset.ruleKey;
+            renderList();
+            renderDetail();
+        });
+        updateThresholdExplanation();
+        loadData();
+    }
+
+    document.addEventListener("DOMContentLoaded", initialize);
+})();

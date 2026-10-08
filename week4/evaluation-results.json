@@ -1,0 +1,212 @@
+{
+  "data": {
+    "method": "Each InvoiceNo is one basket; StockCode is an item; duplicate lines per invoice are collapsed. Cancellations, nonpositive quantity or price, and rows missing product/name/date are excluded.",
+    "cancelled_or_missing_invoice": 9288,
+    "kept_rows": 530104,
+    "missing_product_or_name": 1454,
+    "nonpositive_price": 589,
+    "nonpositive_quantity": 474,
+    "source_rows": 541909,
+    "basket_count": 19960,
+    "item_count": 3922,
+    "first_date": "2010-12-01",
+    "last_date": "2011-12-09"
+  },
+  "source": {
+    "name": "UCI Online Retail",
+    "url": "https://archive.ics.uci.edu/dataset/352/online+retail",
+    "download_url": "https://archive.ics.uci.edu/static/public/352/online%2Bretail.zip",
+    "doi": "10.24432/C5BW33",
+    "license": "CC BY 4.0",
+    "creator": "Daqing Chen",
+    "archive_sha256": "f5385cbb54bbebf7196389109c6b0621faab0c304e3702548165e71c84aede8b",
+    "workbook_sha256": "43465a06f2ccf7c8b5bd2892bc7defb52f97487934fe93b16ae4c3936424676d"
+  },
+  "settings": {
+    "minSupport": 0.01,
+    "minConfidence": 0.3,
+    "maxSize": 10
+  },
+  "defaultRun": {
+    "transactions": 19960,
+    "uniqueItems": 3922,
+    "minCount": 200,
+    "candidateItemsets": 338783,
+    "frequentItemsets": 2026,
+    "candidateRules": 3814,
+    "retainedRules": 2030,
+    "rejectedRules": 1784
+  },
+  "thresholdSweep": [
+    {
+      "name": "Explore rare",
+      "minSupport": 0.005,
+      "minConfidence": 0.2,
+      "counts": {
+        "transactions": 19960,
+        "uniqueItems": 3922,
+        "minCount": 100,
+        "candidateItemsets": 1305668,
+        "frequentItemsets": 18930,
+        "candidateRules": 105692,
+        "retainedRules": 67498,
+        "rejectedRules": 38194
+      }
+    },
+    {
+      "name": "Balanced",
+      "minSupport": 0.01,
+      "minConfidence": 0.3,
+      "counts": {
+        "transactions": 19960,
+        "uniqueItems": 3922,
+        "minCount": 200,
+        "candidateItemsets": 338783,
+        "frequentItemsets": 2026,
+        "candidateRules": 3814,
+        "retainedRules": 2030,
+        "rejectedRules": 1784
+      }
+    },
+    {
+      "name": "Higher support",
+      "minSupport": 0.02,
+      "minConfidence": 0.3,
+      "counts": {
+        "transactions": 19960,
+        "uniqueItems": 3922,
+        "minCount": 400,
+        "candidateItemsets": 47642,
+        "frequentItemsets": 385,
+        "candidateRules": 190,
+        "retainedRules": 164,
+        "rejectedRules": 26
+      }
+    },
+    {
+      "name": "Higher confidence",
+      "minSupport": 0.01,
+      "minConfidence": 0.5,
+      "counts": {
+        "transactions": 19960,
+        "uniqueItems": 3922,
+        "minCount": 200,
+        "candidateItemsets": 338783,
+        "frequentItemsets": 2026,
+        "candidateRules": 3814,
+        "retainedRules": 995,
+        "rejectedRules": 2819
+      }
+    },
+    {
+      "name": "High evidence",
+      "minSupport": 0.02,
+      "minConfidence": 0.5,
+      "counts": {
+        "transactions": 19960,
+        "uniqueItems": 3922,
+        "minCount": 400,
+        "candidateItemsets": 47642,
+        "frequentItemsets": 385,
+        "candidateRules": 190,
+        "retainedRules": 62,
+        "rejectedRules": 128
+      }
+    }
+  ],
+  "examples": {
+    "promising": {
+      "antecedent": [
+        "22386"
+      ],
+      "consequent": [
+        "85099B"
+      ],
+      "antecedentLabel": "JUMBO BAG PINK POLKADOT",
+      "consequentLabel": "JUMBO BAG RED RETROSPOT",
+      "retained": true,
+      "full": {
+        "N": 19960,
+        "nA": 1218,
+        "nB": 2089,
+        "nAB": 825,
+        "support": 0.04133266533066132,
+        "confidence": 0.6773399014778325,
+        "lift": 6.4718546833401325,
+        "baselineConsequence": 0.10465931863727455
+      },
+      "early": {
+        "N": 12495,
+        "nA": 854,
+        "nB": 1382,
+        "nAB": 580,
+        "support": 0.046418567426970786,
+        "confidence": 0.6791569086651054,
+        "lift": 6.140423714739864,
+        "baselineConsequence": 0.11060424169667867
+      },
+      "late": {
+        "N": 7465,
+        "nA": 364,
+        "nB": 707,
+        "nAB": 245,
+        "support": 0.03281982585398526,
+        "confidence": 0.6730769230769231,
+        "lift": 7.106816450875857,
+        "baselineConsequence": 0.09470864032150034
+      }
+    },
+    "rejected": {
+      "antecedent": [
+        "22423"
+      ],
+      "consequent": [
+        "85099B"
+      ],
+      "antecedentLabel": "REGENCY CAKESTAND 3 TIER",
+      "consequentLabel": "JUMBO BAG RED RETROSPOT",
+      "retained": false,
+      "full": {
+        "N": 19960,
+        "nA": 1988,
+        "nB": 2089,
+        "nAB": 285,
+        "support": 0.014278557114228457,
+        "confidence": 0.14336016096579476,
+        "lift": 1.3697792306736543,
+        "baselineConsequence": 0.10465931863727455
+      },
+      "early": {
+        "N": 12495,
+        "nA": 1409,
+        "nB": 1382,
+        "nAB": 195,
+        "support": 0.015606242496998799,
+        "confidence": 0.1383960255500355,
+        "lift": 1.2512723149404439,
+        "baselineConsequence": 0.11060424169667867
+      },
+      "late": {
+        "N": 7465,
+        "nA": 579,
+        "nB": 707,
+        "nAB": 90,
+        "support": 0.012056262558606833,
+        "confidence": 0.15544041450777202,
+        "lift": 1.6412485067899831,
+        "baselineConsequence": 0.09470864032150034
+      }
+    }
+  },
+  "reversePromising": {
+    "N": 19960,
+    "nA": 2089,
+    "nB": 1218,
+    "nAB": 825,
+    "support": 0.04133266533066132,
+    "confidence": 0.3949258018190522,
+    "lift": 6.4718546833401325,
+    "baselineConsequence": 0.06102204408817635
+  },
+  "temporalCutoff": "2011-09-01"
+}

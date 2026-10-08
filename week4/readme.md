@@ -1,195 +1,89 @@
-Role
+# Week 4 — Association Rules on Online Retail
 
--   You are an expert front‑end ML engineer building a browser‑based Two‑Tower retrieval demo with TensorFlow.js for the MovieLens 100K dataset (u.data, u.item), suitable for static GitHub Pages hosting.[classic.d2l+2](https://classic.d2l.ai/chapter_recommender-systems/movielens.html)
-    
+I implemented the association-rules assignment from the Week 4 lecture on the
+[UCI Online Retail dataset](https://archive.ics.uci.edu/dataset/352/online+retail).
+The former MovieLens Two-Tower example in this folder did not match that task.
 
-Context
+## Run the demo
 
--   Dataset: MovieLens 100K
-    
-    -   u.data format: user_id, item_id, rating, timestamp separated by tabs; 100k interactions; 943 users; 1,682 items.[kaggle+2](https://www.kaggle.com/datasets/prajitdatta/movielens-100k-dataset)
-        
-    -   u.item format: item_id|title|release_date|…; use item_id and title, optionally year parsed from title. [info.univ-tours](https://www.info.univ-tours.fr/~vperalta/publications/trapmd2-vp.pdf)
-        
--   Goal: Build an in‑browser Two‑Tower model:
-    
-    -   User tower: user_id → embedding
-        
-    -   Item tower: item_id → embedding
-        
-    -   Scoring: dot product
-        
-    -   Loss: sampled‑softmax (in‑batch negatives) or BPR‑style pairwise; acceptable to use a simple contrastive loss with in‑batch negatives for clarity.[tensorflow+1](https://www.tensorflow.org/recommenders/examples/basic_retrieval)
-        
--   UX requirements:
-    
-    -   Buttons: “Load Data”, “Train”, “Test”.
-        
-    -   Training shows live loss chart and epoch progress; after training, render 2D projection (PCA or t‑SNE via numeric approximation) of a sample of item embeddings.
-        
-    -   Test action: randomly select a user who has at least 20 ratings; show:
-        
-        -   Left: that user’s top‑10 historically rated movies (by rating, then recency).
-            
-        -   Right: model’s top‑10 recommended movies (exclude items the user already rated).
-            
-    -   Present the two lists in a single side‑by‑side HTML table.
-        
--   Constraints:
-    
-    -   Pure client‑side (no server), runs on GitHub Pages. Fetch u.data and u.item via relative paths (place files under data/).
-        
-    -   Use TensorFlow.js only; no Python, no build step.
-        
-    -   Keep memory in check: allow limiting interactions (e.g., max 80k) and embedding dim (e.g., 32).
-        
-    -   Deterministic seeding optional; browsers vary.
-        
--   References for correctness:
-    
-    -   Two‑tower retrieval on MovieLens in TF/TFRS (concepts and loss)[tensorflow+1](https://blog.tensorflow.org/2020/09/introducing-tensorflow-recommenders.html)
-        
-    -   MovieLens 100K format details[fontaine618.github+2](https://fontaine618.github.io/publication/fontaine-movielens-2020/fontaine-movielens-2020.pdf)
-        
-    -   TensorFlow.js in‑browser training guidance[techhub.iodigital+1](https://techhub.iodigital.com/articles/on-the-fly-machine-learning-in-the-browser-with-tensor-flow-js)
-        
+From this directory, start a static server and open `http://localhost:8000/`:
 
-Instructions
+```bash
+python -m http.server 8000
+```
 
--   Return three files with complete code, each in a separate fenced code block.
-    
--   Implement clean, commented JavaScript with clear sections.
-    
+The page loads the committed `data/baskets.json` file, so it does not require
+Python packages, a build step, or an external service at runtime. Change the
+minimum support and confidence controls and press **Run rules**. The retained
+list contains only rules with lift above 1; the rejected-candidates view shows
+the evidence for rules that fail a threshold or the lift criterion. Select a
+rule to see its transaction counts and all three metrics. Search accepts a
+product name, StockCode, or an exact directed pair such as `22386 → 85099B`.
+**Run tests** checks
+the calculations on a small, known basket example in the browser.
 
-a) index.html
+## Data and preprocessing
 
--   Include:
-    
-    -   Title and minimal CSS.
-        
-    -   Buttons: Load Data, Train, Test.
-        
-    -   Status area, loss chart canvas, and embedding projection canvas.
-        
-    -   A <div id="results"> to hold the side‑by‑side table of Top‑10 Rated vs Top‑10 Recommended.
-        
-    -   Scripts: load TensorFlow.js from CDN, then app.js and two-tower.js.
-        
--   Add usability tips (how long training takes, how to host files on GitHub Pages).
-    
+- Source: Chen, D. (2015), *Online Retail*, UCI Machine Learning Repository,
+  [DOI: 10.24432/C5BW33](https://doi.org/10.24432/C5BW33), CC BY 4.0.
+- Each distinct `InvoiceNo` is a transaction. `StockCode` is the item ID and
+  the most frequent `Description` for that code is its display label.
+- Duplicate invoice–item lines count once. I excluded C-prefixed cancellation
+  invoices, nonpositive quantity or price, and rows without a product code,
+  description, or invoice date. This leaves **530,104 rows**, **19,960 baskets**,
+  and **3,922 products** from the original 541,909 rows. The JSON records the
+  exact exclusion counts, date range, original file SHA-256 values, and labels.
+- To rebuild the JSON from the official archive, run
+  `python prepare_data.py`. This preparation step requires `openpyxl`.
+  `python prepare_data.py --source "Online Retail.xlsx"` also works with a
+  downloaded workbook.
 
-b) app.js
+The committed data file contains product codes, names, basket membership, and
+invoice dates for temporal analysis. It does not include customer identifiers.
 
--   Data loading:
-    
-    -   Fetch data/u.data and data/u.item with fetch(); parse lines; build:
-        
-        -   interactions: [{userId, itemId, rating, ts}]
-            
-        -   items: Map itemId → {title, year}
-            
-    -   Build user→rated items and user→top‑rated (compute once).
-        
-    -   Create integer indexers for userId and itemId to 0‑based indices; store reverse maps.
-        
--   Train pipeline:
-    
-    -   Build batches: for each (u, i_pos), sample negatives from global item set or use in‑batch negatives.
-        
-    -   Normalize user/item counts; allow config: epochs, batch size, embeddingDim, learningRate, maxInteractions.
-        
-    -   Show a live line chart of loss per batch/epoch using a simple canvas 2D plotter (no external chart lib).
-        
--   Test pipeline:
-    
-    -   Pick a random user with ≥20 ratings.
-        
-    -   Compute user embedding via user tower; compute scores vs all items using matrix ops (batched for memory).
-        
-    -   Exclude items the user already rated; return top‑10 titles.
-        
-    -   Render a side‑by‑side HTML table: left = user’s historical top‑10; right = model recommendations top‑10.
-        
--   Visualization:
-    
-    -   After training, take a sample (e.g., 1,000 items), project item embeddings to 2D with PCA (simple power method or SVD via numeric approximation) and draw scatter with titles on hover.
-        
+## Mining and interpretation
 
-c) two-tower.js
+I used Apriori candidate generation and the subset-pruning property to mine
+frequent itemsets and their directional rules. The interface permits itemsets
+up to size 10; at the lowest offered support of 0.5%, the largest frequent
+itemset in these data has size 6. The default minimum support is **1%** (at least 200 of
+19,960 invoices), and the default minimum confidence is **30%**. A 1% floor
+avoids relying on a handful of accidental co-purchases, while 30% asks that
+the consequence occur in a substantial share of baskets containing the
+antecedent. Both controls are adjustable because a single threshold is not
+universally suitable. For a rule `A → B`:
 
--   Implement a minimal Two‑Tower in TF.js:
-    
-    -   Class TwoTowerModel:
-        
-        -   constructor(numUsers, numItems, embDim)
-            
-            -   userEmbedding: tf.variable(tf.randomNormal([numUsers, embDim], stddev=0.05))
-                
-            -   itemEmbedding: tf.variable(tf.randomNormal([numItems, embDim], stddev=0.05))
-                
-        -   userForward(userIdxTensor) → embeddings gather
-            
-        -   itemForward(itemIdxTensor) → embeddings gather
-            
-        -   score(uEmb, iEmb): dot product along last dim
-            
-    -   Loss:
-        
-        -   Option 1 (default): in‑batch sampled softmax
-            
-            -   For a batch of user embeddings U and positive item embeddings I+, compute logits = U @ I^T, labels = diagonal; apply softmax cross‑entropy.
-                
-        -   Option 2: BPR pairwise loss
-            
-            -   Sample negative items I−; loss = −log σ(score(U, I+) − score(U, I−)).
-                
-        -   Provide a flag to switch.
-            
-    -   Training step:
-        
-        -   Adam optimizer; gradient tape to update both embedding tables.
-            
-        -   Return scalar loss for UI plotting.
-            
-    -   Inference:
-        
-        -   getUserEmbedding(uIdx)
-            
-        -   getScoresForAllItems(uEmb, itemEmbMatrix) with batched matmul; return top‑K indices.
-            
--   Comments:
-    
-    -   Add short comments above each key block explaining the idea (why two‑towers, how in‑batch negatives work, why dot product).
-        
+```text
+support(A → B)    = count(A ∪ B) / N
+confidence(A → B) = count(A ∪ B) / count(A)
+lift(A → B)       = confidence(A → B) / (count(B) / N)
+```
 
-Format
+`N` includes all cleaned baskets, including one-product invoices. I retain
+rules with support and confidence at or above the chosen thresholds and
+**lift > 1** for further analysis. The rejected view is deliberately drawn
+from candidate rules *before* the confidence/lift filter, so an apparently
+attractive but weak rule can be examined without being called a retained rule.
 
--   Return three code blocks only, labeled exactly:
-    
-    -   index.html
-        
-    -   app.js
-        
-    -   two-tower.js
-        
--   No extra prose outside the code blocks.
-    
--   Ensure the code runs when the repository structure is:
-    
-    -   /index.html
-        
-    -   /app.js
-        
-    -   /two-tower.js
-        
-    -   /data/u.data
-        
-    -   /data/u.item
-        
--   The UI must:
-    
-    -   Load Data → parse and index.
-        
-    -   Train → run epochs, update loss chart, then draw embedding projection.
-        
-    -   Test → pick a random qualified user, render a side‑by‑side table of Top‑10 Rated vs Top‑10 Recommended.
+Association does not establish that a bundle or cross-sell intervention will
+increase sales. The report compares a promising and a rejected rule using
+counts and metrics, checks a later period, and proposes a controlled test.
+
+## Files and verification
+
+- `prepare_data.py` creates the deterministic basket JSON from the original
+  UCI workbook.
+- `apriori.js` implements basket construction, Apriori itemsets, directional
+  rules, exact counts, and metric calculations.
+- `apriori.test.js` tests a known example and edge cases independently of the
+  UI. Run with `node apriori.test.js`.
+- `index.html`, `style.css`, and `app.js` provide the interactive explorer.
+- `evaluate.js` reruns the miner at several threshold settings, independently
+  counts two business examples across early/later invoices, checks them
+  against the miner, and writes `evaluation-results.json`. Run with
+  `node evaluate.js`.
+- `report_assets/` includes the three real browser screenshots, the optional
+  Playwright capture script, and the PDF builder. The PDF documents the
+  measured run and my interpretation.
+
+Project: [Petr Vorozhtsov's fork](https://github.com/PetrVorozhtsov/RecSys-LLMs/tree/main/week4).
