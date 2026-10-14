@@ -1,0 +1,293 @@
+{
+  "generatedAtUTC": "2026-10-14T14:38:24.057Z",
+  "nodeVersion": "v24.19.0",
+  "tensorflowVersion": "4.22.0",
+  "backend": "cpu",
+  "sourceHashesSHA256": {
+    "data.js": "bdfad35b2c1e1aecfadd21188bb2660f1e4615bcf22c82c5692f4b49f7570a61",
+    "script.js": "ad9f399f65b2db1aa6c3b3bbfd8d9ebd4b2c738202ec98d6b0d6e3c31e9f5a3c",
+    "verify.cjs": "32548e3d51e86d1e78672d492557763b3379cbe0251038e8ad8f54c4948b8715"
+  },
+  "protocol": "16D literal dot product; training-only catalogue; train+validation masking; macro Recall@K on eligible relevant test movies.",
+  "suppliedHarness": {
+    "passed": 8,
+    "failed": 3,
+    "pending": 0,
+    "checks": [
+      {
+        "name": "computeBaselineRMSE: toy split matches the hand-computed value",
+        "status": "PASS",
+        "detail": "rmse=1.0000",
+        "documentedConflict": null
+      },
+      {
+        "name": "computeBaselineRMSE: empty split returns 0 (no division by zero)",
+        "status": "PASS",
+        "detail": "guarded",
+        "documentedConflict": null
+      },
+      {
+        "name": "fmt: formats numbers and guards non-finite input",
+        "status": "PASS",
+        "detail": "ok",
+        "documentedConflict": null
+      },
+      {
+        "name": "movieTitle: resolves ids and falls back for unknown ids",
+        "status": "PASS",
+        "detail": "ok",
+        "documentedConflict": null
+      },
+      {
+        "name": "predictRating: clamps to [1, 5] and falls back to the global mean",
+        "status": "FAIL",
+        "detail": "predictRating = 11, expected 5 (3 + 11 clamped)",
+        "documentedConflict": "Lecture requires the literal dot product; supplied fixture expects clipping to [1,5]."
+      },
+      {
+        "name": "initializeFactors: allocates tf.Variable factors and the global mean",
+        "status": "PASS",
+        "detail": "user [3,4], item [4,4]",
+        "documentedConflict": null
+      },
+      {
+        "name": "trainMF: returns one finite history row per epoch",
+        "status": "PASS",
+        "detail": "e1:3.9708 e2:3.9600 e3:3.9404",
+        "documentedConflict": null
+      },
+      {
+        "name": "selectBestCheckpoint: smallest valRMSE wins, ties keep the earliest epoch",
+        "status": "PASS",
+        "detail": "best epoch 1",
+        "documentedConflict": null
+      },
+      {
+        "name": "recommendTopK: excludes train+val items but allows test-rated items",
+        "status": "FAIL",
+        "detail": "movie 3 is test-rated and must be eligible",
+        "documentedConflict": "Supplied movie 3 is absent from all training rows, but its assertion requires catalogue-wide eligibility."
+      },
+      {
+        "name": "recallAtK: relevant movie at rank 1 scores 1.0; at rank 11 scores 0.0",
+        "status": "FAIL",
+        "detail": "rank-11 recall = 1, expected 0",
+        "documentedConflict": "The rank-11 fixture has only training movie IDs 1,2,3; after masking ID 1, both IDs 2,3 fit in Top-10."
+      },
+      {
+        "name": "recallAtK: empty test set returns 0 without dividing by zero",
+        "status": "PASS",
+        "detail": "guarded",
+        "documentedConflict": null
+      }
+    ],
+    "unexpectedFailures": [],
+    "note": "Original checks were run unchanged. Documented contract conflicts are reported as failures, never relabeled as passes."
+  },
+  "additionalVerification": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "checks": [
+      {
+        "name": "Literal 16D dot product has neither mean offset nor clipping",
+        "status": "PASS",
+        "evidence": {
+          "trainingMean": 4,
+          "highPrediction": 11,
+          "lowPrediction": -2,
+          "handCalculation": "[1,2] dot [3,4] = 1*3 + 2*4 = 11"
+        }
+      },
+      {
+        "name": "Unknown and training-absent IDs return finite fallback and no cold-user list",
+        "status": "PASS",
+        "evidence": {
+          "pairCount": 9,
+          "fallback": 4,
+          "coldUsersRecommended": 0
+        }
+      },
+      {
+        "name": "Batched RMSE agrees with independent scalar arithmetic",
+        "status": "PASS",
+        "evidence": {
+          "numerator": 74,
+          "denominator": 2,
+          "expected": 6.082762530298219,
+          "batched": 6.082762530298219,
+          "scalar": 6.082762530298219
+        }
+      },
+      {
+        "name": "MF and baseline RMSE exclude the same cold-start rows",
+        "status": "PASS",
+        "evidence": {
+          "inputRows": 5,
+          "eligibleRows": 2,
+          "excludedRows": 3,
+          "expectedMF": 6.082762530298219,
+          "expectedBaseline": 0.7071067811865476,
+          "baselineTrainingMean": 4,
+          "coldPairs": [
+            [
+              3,
+              2
+            ],
+            [
+              1,
+              4
+            ],
+            [
+              99999,
+              3
+            ]
+          ]
+        }
+      },
+      {
+        "name": "Top-K uses the global training pool and excludes this user's train/validation",
+        "status": "PASS",
+        "evidence": {
+          "eligibleIDs": [
+            13,
+            12,
+            11,
+            10,
+            9,
+            8,
+            7,
+            6,
+            5,
+            4,
+            3
+          ],
+          "excludedIDs": [
+            1,
+            2,
+            14
+          ],
+          "testRatedIDStillEligible": 3
+        }
+      },
+      {
+        "name": "Recall rank 1 versus rank 11 with every candidate observed by another user",
+        "status": "PASS",
+        "evidence": [
+          {
+            "targetRank": 1,
+            "value": 1,
+            "globalTrainingMovies": 12
+          },
+          {
+            "targetRank": 11,
+            "value": 0,
+            "globalTrainingMovies": 12
+          }
+        ]
+      },
+      {
+        "name": "Recall is a user macro-average with relevance and cold-start exclusions",
+        "status": "PASS",
+        "evidence": {
+          "perUser": [
+            {
+              "userId": 1,
+              "relevant": 2,
+              "hit": 1
+            },
+            {
+              "userId": 2,
+              "relevant": 1,
+              "hit": 1
+            }
+          ],
+          "macroExpected": 0.75,
+          "microWouldBe": 0.6666666666666666,
+          "actual": 0.75,
+          "excluded": {
+            "unseenIds": [
+              14
+            ],
+            "usersWithoutRelevant": [
+              3,
+              4,
+              5
+            ],
+            "unknownUserIds": [
+              5
+            ],
+            "unavailableMovieIds": [],
+            "previouslyRatedMovieIds": [
+              1,
+              12
+            ]
+          },
+          "blockedRelevantMovieIDsForUser1": [
+            1,
+            12
+          ]
+        }
+      },
+      {
+        "name": "Validation selects and restores the actual best checkpoint weights",
+        "status": "PASS",
+        "evidence": {
+          "selectedEpoch": 1,
+          "firstEpochValRMSE": 0.10249936379840006,
+          "finalEpochValRMSE": 0.4404756982965064,
+          "restoredValRMSE": 0.10249936379840006,
+          "weightCoordinatesCompared": 64
+        }
+      },
+      {
+        "name": "Repeated initialize/train does not accumulate tensors",
+        "status": "PASS",
+        "evidence": {
+          "baseline": {
+            "numTensors": 2,
+            "numBytes": 384
+          },
+          "measurements": [
+            {
+              "iteration": 1,
+              "numTensors": 2,
+              "numBytes": 384
+            },
+            {
+              "iteration": 2,
+              "numTensors": 2,
+              "numBytes": 384
+            },
+            {
+              "iteration": 3,
+              "numTensors": 2,
+              "numBytes": 384
+            },
+            {
+              "iteration": 4,
+              "numTensors": 2,
+              "numBytes": 384
+            }
+          ],
+          "suppliedHarnessLeaksExcluded": true,
+          "backendMemoryUnreliableFlag": true
+        }
+      },
+      {
+        "name": "Checkpoint ties select the earliest epoch without mutating history",
+        "status": "PASS",
+        "evidence": {
+          "selectedEpoch": 1,
+          "historyUnchanged": true
+        }
+      },
+      {
+        "name": "Invalid hyperparameter guard",
+        "status": "PASS",
+        "evidence": "Invalid training options were rejected before training."
+      }
+    ]
+  },
+  "status": "PASS_ADDITIONAL_WITH_DOCUMENTED_SUPPLIED_FAILURES"
+}

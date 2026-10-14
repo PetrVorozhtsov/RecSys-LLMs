@@ -1,0 +1,1343 @@
+{
+  "method": "Independent Python standard-library parsing; per-user sort by (timestamp,movieId), floor(0.8*n), floor(0.1*n), remainder test; no JS imported.",
+  "files": {
+    "u.data": {
+      "bytes": 2079173,
+      "sha256": "739785378ac6891059e1f26a6cb92f2bb088ef8d9e5807aea02dd6c708995282"
+    },
+    "u.item": {
+      "bytes": 238026,
+      "sha256": "36e14e4ae7799bb26fe80e60fe1666e6a48179413a03808b1eb17e3998539871"
+    }
+  },
+  "raw": {
+    "ratingLines": 100000,
+    "nonemptyRatingLines": 100000,
+    "movieLines": 1682,
+    "nonemptyMovieLines": 1682
+  },
+  "validated": {
+    "ratings": 100000,
+    "users": 943,
+    "movies": 1682,
+    "minUserId": 1,
+    "maxUserId": 943,
+    "minMovieId": 1,
+    "maxMovieId": 1682,
+    "minRatingsPerUser": 20,
+    "maxRatingsPerUser": 737,
+    "malformedRatingRows": [],
+    "malformedMovieRows": [],
+    "duplicateRatingRows": 0,
+    "duplicateUserMoviePairs": [],
+    "ratingMovieIdsMissingMetadata": [],
+    "movieMetadataNeverRatedIds": [],
+    "minTimestampUTC": "1997-09-20T03:05:10+00:00",
+    "maxTimestampUTC": "1998-04-22T23:10:38+00:00",
+    "unknownGenreMovieIds": [
+      267,
+      1373
+    ],
+    "moviesWithoutRealGenreIds": [
+      267,
+      1373
+    ]
+  },
+  "matrix": {
+    "actualShape": [
+      943,
+      1682
+    ],
+    "actualCells": 1586126,
+    "actualObservedDensity": 0.06304669364224531,
+    "actualMissingFraction": 0.9369533063577546,
+    "allocationShape": [
+      944,
+      1683
+    ],
+    "allocationCells": 1588752,
+    "allocationObservedDensity": 0.06294248567429025,
+    "note": "Row/column zero are unused id-index padding; sparsity should use actual 943 x 1682 pairs, not 944 x 1683 allocated cells."
+  },
+  "split": {
+    "stats": {
+      "train": {
+        "ratings": 79619,
+        "users": 943,
+        "movies": 1611,
+        "ratingSum": 285084,
+        "ratingSumSquares": 1118026,
+        "ratingMean": 3.5806026199776437,
+        "baselineRMSEFromMoments": 1.105208514257312,
+        "baselineRMSEDirect": 1.1052085142573125,
+        "unseenTrainUserIds": [],
+        "unseenTrainMovieIds": [],
+        "ratingsWithUnseenTrainMovie": 0,
+        "eligibleKnownTrainUserAndMovie": {
+          "ratings": 79619,
+          "excludedRatingCount": 0,
+          "ratingSum": 285084,
+          "ratingSumSquares": 1118026,
+          "ratingMean": 3.5806026199776437,
+          "baselineRMSEFromMoments": 1.105208514257312,
+          "baselineRMSEDirect": 1.1052085142573125,
+          "eligibilityRule": "User AND movie ids occur in training. Baseline remains the training-set mean; validation/test means are never used for prediction."
+        }
+      },
+      "val": {
+        "ratings": 9596,
+        "users": 943,
+        "movies": 1315,
+        "ratingSum": 32097,
+        "ratingSumSquares": 120255,
+        "ratingMean": 3.344831179658191,
+        "baselineRMSEFromMoments": 1.1829947710600113,
+        "baselineRMSEDirect": 1.1829947710600115,
+        "unseenTrainUserIds": [],
+        "unseenTrainMovieIds": [
+          677,
+          814,
+          897,
+          910,
+          957,
+          1106,
+          1408,
+          1453,
+          1460,
+          1494,
+          1508,
+          1526,
+          1543,
+          1546,
+          1565,
+          1569,
+          1571,
+          1575,
+          1576,
+          1579,
+          1584,
+          1586,
+          1588,
+          1603,
+          1614,
+          1633,
+          1637,
+          1653,
+          1659,
+          1667,
+          1668,
+          1679
+        ],
+        "ratingsWithUnseenTrainMovie": 35,
+        "eligibleKnownTrainUserAndMovie": {
+          "ratings": 9561,
+          "excludedRatingCount": 35,
+          "ratingSum": 32019,
+          "ratingSumSquares": 120029,
+          "ratingMean": 3.3489174772513337,
+          "baselineRMSEFromMoments": 1.1800217293694537,
+          "baselineRMSEDirect": 1.1800217293694546,
+          "eligibilityRule": "User AND movie ids occur in training. Baseline remains the training-set mean; validation/test means are never used for prediction."
+        }
+      },
+      "test": {
+        "ratings": 10785,
+        "users": 943,
+        "movies": 1384,
+        "ratingSum": 35805,
+        "ratingSumSquares": 134423,
+        "ratingMean": 3.3198887343532686,
+        "baselineRMSEFromMoments": 1.2289001371836485,
+        "baselineRMSEDirect": 1.2289001371836488,
+        "unseenTrainUserIds": [],
+        "unseenTrainMovieIds": [
+          897,
+          910,
+          913,
+          957,
+          1106,
+          1130,
+          1236,
+          1408,
+          1432,
+          1447,
+          1458,
+          1476,
+          1498,
+          1508,
+          1520,
+          1525,
+          1562,
+          1563,
+          1570,
+          1572,
+          1577,
+          1580,
+          1583,
+          1588,
+          1613,
+          1618,
+          1621,
+          1624,
+          1625,
+          1645,
+          1646,
+          1647,
+          1648,
+          1649,
+          1650,
+          1651,
+          1661,
+          1665,
+          1666,
+          1669,
+          1671,
+          1674,
+          1677,
+          1678,
+          1680,
+          1682
+        ],
+        "ratingsWithUnseenTrainMovie": 53,
+        "eligibleKnownTrainUserAndMovie": {
+          "ratings": 10732,
+          "excludedRatingCount": 53,
+          "ratingSum": 35683,
+          "ratingSumSquares": 134065,
+          "ratingMean": 3.324916138650764,
+          "baselineRMSEFromMoments": 1.2257193843347927,
+          "baselineRMSEDirect": 1.2257193843347933,
+          "eligibilityRule": "User AND movie ids occur in training. Baseline remains the training-set mean; validation/test means are never used for prediction."
+        }
+      }
+    },
+    "splitExclusions": [],
+    "trainingMean": 3.5806026199776437,
+    "perUserTimestampTieGroups": 25211,
+    "partitionExhaustive": true,
+    "partitionDisjoint": true,
+    "chronologyAllUsers": true
+  },
+  "retrieval": {
+    "candidateMovieCount": 1611,
+    "testRatingRelevantThreshold": 4,
+    "relevantTestRatings": 5155,
+    "eligibleRelevantTestRatings": 5142,
+    "distinctEligibleRelevantMovieCount": 1067,
+    "unseenRelevantTestMovieIds": [
+      913,
+      1106,
+      1130,
+      1458,
+      1498,
+      1525,
+      1613,
+      1625,
+      1645,
+      1646,
+      1650,
+      1651,
+      1674
+    ],
+    "unseenRelevantTestMovieCount": 13,
+    "unseenRelevantTestRatingCount": 13,
+    "usersWithoutEligibleRelevantTest": [
+      61,
+      76,
+      82,
+      93,
+      102,
+      105,
+      107,
+      108,
+      110,
+      111,
+      120,
+      129,
+      149,
+      155,
+      161,
+      202,
+      209,
+      228,
+      238,
+      240,
+      241,
+      281,
+      284,
+      289,
+      293,
+      302,
+      309,
+      362,
+      380,
+      386,
+      395,
+      399,
+      405,
+      441,
+      443,
+      444,
+      446,
+      453,
+      465,
+      502,
+      510,
+      515,
+      523,
+      544,
+      549,
+      550,
+      572,
+      578,
+      580,
+      584,
+      587,
+      596,
+      631,
+      646,
+      647,
+      651,
+      656,
+      675,
+      685,
+      698,
+      722,
+      723,
+      724,
+      732,
+      733,
+      750,
+      754,
+      769,
+      774,
+      782,
+      809,
+      814,
+      822,
+      824,
+      827,
+      856,
+      873,
+      909,
+      925,
+      926,
+      930,
+      933
+    ],
+    "usersWithoutEligibleRelevantTestCount": 82,
+    "evaluableUserCount": 861,
+    "relevantTestPairsAlreadyInHistoryCount": 0,
+    "eligibleRelevantCountHistogram": {
+      "1": 106,
+      "2": 126,
+      "3": 123,
+      "4": 87,
+      "5": 74,
+      "6": 69,
+      "7": 43,
+      "8": 38,
+      "9": 38,
+      "10": 30,
+      "11": 19,
+      "12": 19,
+      "13": 19,
+      "14": 13,
+      "15": 9,
+      "16": 9,
+      "17": 2,
+      "18": 7,
+      "19": 5,
+      "20": 7,
+      "21": 1,
+      "22": 4,
+      "23": 1,
+      "24": 1,
+      "26": 2,
+      "27": 3,
+      "28": 1,
+      "29": 1,
+      "31": 1,
+      "32": 1,
+      "37": 1,
+      "50": 1
+    },
+    "note": "unseenIds is a DISTINCT movie-id count, not the number of rating rows. Recall is macro averaged across evaluable users, not pooled micro recall."
+  },
+  "selectedUsers": {
+    "rule": "Users 1 and 2 chosen from contrasting train+validation genre profiles only; no recommendations or test preferences used in selection.",
+    "profiles": [
+      {
+        "userId": 1,
+        "splitCounts": {
+          "train": 217,
+          "val": 27,
+          "test": 28
+        },
+        "pastRatings": 244,
+        "pastRatingMean": 3.5778688524590163,
+        "likedPastRatings": 144,
+        "genreStats": [
+          {
+            "genre": "Drama",
+            "pastCount": 93,
+            "pastFraction": 0.38114754098360654,
+            "pastMeanRating": 3.913978494623656,
+            "likedCount": 68,
+            "likedFraction": 0.4722222222222222
+          },
+          {
+            "genre": "Comedy",
+            "pastCount": 81,
+            "pastFraction": 0.3319672131147541,
+            "pastMeanRating": 3.419753086419753,
+            "likedCount": 42,
+            "likedFraction": 0.2916666666666667
+          },
+          {
+            "genre": "Action",
+            "pastCount": 69,
+            "pastFraction": 0.2827868852459016,
+            "pastMeanRating": 3.4057971014492754,
+            "likedCount": 37,
+            "likedFraction": 0.2569444444444444
+          },
+          {
+            "genre": "Thriller",
+            "pastCount": 47,
+            "pastFraction": 0.19262295081967212,
+            "pastMeanRating": 3.574468085106383,
+            "likedCount": 27,
+            "likedFraction": 0.1875
+          },
+          {
+            "genre": "Sci-Fi",
+            "pastCount": 37,
+            "pastFraction": 0.15163934426229508,
+            "pastMeanRating": 3.945945945945946,
+            "likedCount": 27,
+            "likedFraction": 0.1875
+          },
+          {
+            "genre": "Romance",
+            "pastCount": 39,
+            "pastFraction": 0.1598360655737705,
+            "pastMeanRating": 3.923076923076923,
+            "likedCount": 26,
+            "likedFraction": 0.18055555555555555
+          },
+          {
+            "genre": "Adventure",
+            "pastCount": 38,
+            "pastFraction": 0.1557377049180328,
+            "pastMeanRating": 2.9210526315789473,
+            "likedCount": 15,
+            "likedFraction": 0.10416666666666667
+          },
+          {
+            "genre": "War",
+            "pastCount": 24,
+            "pastFraction": 0.09836065573770492,
+            "pastMeanRating": 3.75,
+            "likedCount": 15,
+            "likedFraction": 0.10416666666666667
+          },
+          {
+            "genre": "Crime",
+            "pastCount": 22,
+            "pastFraction": 0.09016393442622951,
+            "pastMeanRating": 3.3181818181818183,
+            "likedCount": 13,
+            "likedFraction": 0.09027777777777778
+          },
+          {
+            "genre": "Horror",
+            "pastCount": 13,
+            "pastFraction": 0.05327868852459016,
+            "pastMeanRating": 3.4615384615384617,
+            "likedCount": 7,
+            "likedFraction": 0.04861111111111111
+          },
+          {
+            "genre": "Children's",
+            "pastCount": 24,
+            "pastFraction": 0.09836065573770492,
+            "pastMeanRating": 2.2083333333333335,
+            "likedCount": 5,
+            "likedFraction": 0.034722222222222224
+          },
+          {
+            "genre": "Musical",
+            "pastCount": 12,
+            "pastFraction": 0.04918032786885246,
+            "pastMeanRating": 2.8333333333333335,
+            "likedCount": 5,
+            "likedFraction": 0.034722222222222224
+          },
+          {
+            "genre": "Animation",
+            "pastCount": 9,
+            "pastFraction": 0.036885245901639344,
+            "pastMeanRating": 3.3333333333333335,
+            "likedCount": 4,
+            "likedFraction": 0.027777777777777776
+          },
+          {
+            "genre": "Documentary",
+            "pastCount": 4,
+            "pastFraction": 0.01639344262295082,
+            "pastMeanRating": 4.75,
+            "likedCount": 4,
+            "likedFraction": 0.027777777777777776
+          },
+          {
+            "genre": "Western",
+            "pastCount": 6,
+            "pastFraction": 0.02459016393442623,
+            "pastMeanRating": 3.6666666666666665,
+            "likedCount": 3,
+            "likedFraction": 0.020833333333333332
+          },
+          {
+            "genre": "Mystery",
+            "pastCount": 5,
+            "pastFraction": 0.020491803278688523,
+            "pastMeanRating": 3.6,
+            "likedCount": 3,
+            "likedFraction": 0.020833333333333332
+          },
+          {
+            "genre": "Fantasy",
+            "pastCount": 2,
+            "pastFraction": 0.00819672131147541,
+            "pastMeanRating": 3.5,
+            "likedCount": 1,
+            "likedFraction": 0.006944444444444444
+          },
+          {
+            "genre": "Film-Noir",
+            "pastCount": 1,
+            "pastFraction": 0.004098360655737705,
+            "pastMeanRating": 5.0,
+            "likedCount": 1,
+            "likedFraction": 0.006944444444444444
+          }
+        ],
+        "likedPastMovieExamples": [
+          {
+            "id": 9,
+            "title": "Dead Man Walking (1995)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878543541
+          },
+          {
+            "id": 16,
+            "title": "French Twist (Gazon maudit) (1995)",
+            "genres": [
+              "Comedy",
+              "Romance"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878543541
+          },
+          {
+            "id": 44,
+            "title": "Dolores Claiborne (1994)",
+            "genres": [
+              "Drama",
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878543541
+          },
+          {
+            "id": 86,
+            "title": "Remains of the Day, The (1993)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878543541
+          },
+          {
+            "id": 87,
+            "title": "Searching for Bobby Fischer (1993)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878543541
+          },
+          {
+            "id": 12,
+            "title": "Usual Suspects, The (1995)",
+            "genres": [
+              "Crime",
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542960
+          },
+          {
+            "id": 208,
+            "title": "Young Frankenstein (1974)",
+            "genres": [
+              "Comedy",
+              "Horror"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542960
+          },
+          {
+            "id": 113,
+            "title": "Horseman on the Roof, The (Hussard sur le toit, Le) (1995)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542738
+          },
+          {
+            "id": 198,
+            "title": "Nikita (La Femme Nikita) (1990)",
+            "genres": [
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542717
+          },
+          {
+            "id": 82,
+            "title": "Jurassic Park (1993)",
+            "genres": [
+              "Action",
+              "Adventure",
+              "Sci-Fi"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542589
+          },
+          {
+            "id": 152,
+            "title": "Sleeper (1973)",
+            "genres": [
+              "Comedy",
+              "Sci-Fi"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542589
+          },
+          {
+            "id": 57,
+            "title": "Priest (1994)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878542459
+          },
+          {
+            "id": 173,
+            "title": "Princess Bride, The (1987)",
+            "genres": [
+              "Action",
+              "Adventure",
+              "Comedy",
+              "Romance"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878541803
+          },
+          {
+            "id": 115,
+            "title": "Haunted World of Edward D. Wood Jr., The (1995)",
+            "genres": [
+              "Documentary"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 878541637
+          },
+          {
+            "id": 269,
+            "title": "Full Monty, The (1997)",
+            "genres": [
+              "Comedy"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 877482427
+          }
+        ],
+        "pastMovieIds": [
+          1,
+          2,
+          3,
+          4,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          19,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83,
+          84,
+          85,
+          86,
+          87,
+          88,
+          89,
+          90,
+          91,
+          92,
+          93,
+          94,
+          95,
+          96,
+          97,
+          98,
+          99,
+          101,
+          103,
+          104,
+          105,
+          106,
+          107,
+          108,
+          109,
+          110,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127,
+          128,
+          130,
+          131,
+          132,
+          133,
+          134,
+          135,
+          136,
+          137,
+          138,
+          139,
+          140,
+          141,
+          142,
+          143,
+          144,
+          145,
+          146,
+          147,
+          148,
+          149,
+          150,
+          151,
+          152,
+          153,
+          155,
+          156,
+          157,
+          158,
+          159,
+          160,
+          161,
+          162,
+          163,
+          164,
+          165,
+          166,
+          167,
+          168,
+          170,
+          172,
+          173,
+          174,
+          175,
+          176,
+          177,
+          179,
+          180,
+          181,
+          182,
+          183,
+          184,
+          185,
+          186,
+          187,
+          188,
+          190,
+          191,
+          192,
+          193,
+          194,
+          195,
+          196,
+          197,
+          198,
+          199,
+          200,
+          201,
+          202,
+          203,
+          204,
+          205,
+          206,
+          207,
+          208,
+          210,
+          211,
+          212,
+          213,
+          214,
+          215,
+          216,
+          217,
+          218,
+          219,
+          220,
+          223,
+          224,
+          225,
+          226,
+          227,
+          229,
+          230,
+          231,
+          232,
+          233,
+          234,
+          235,
+          236,
+          237,
+          238,
+          239,
+          240,
+          241,
+          243,
+          245,
+          246,
+          247,
+          248,
+          249,
+          250,
+          251,
+          252,
+          253,
+          254,
+          257,
+          259,
+          260,
+          261,
+          262,
+          263,
+          264,
+          265,
+          267,
+          268,
+          269
+        ],
+        "pastGenreSet": [
+          "Action",
+          "Adventure",
+          "Animation",
+          "Children's",
+          "Comedy",
+          "Crime",
+          "Documentary",
+          "Drama",
+          "Fantasy",
+          "Film-Noir",
+          "Horror",
+          "Musical",
+          "Mystery",
+          "Romance",
+          "Sci-Fi",
+          "Thriller",
+          "War",
+          "Western"
+        ],
+        "eligibleTestRelevantCount": 19
+      },
+      {
+        "userId": 2,
+        "splitCounts": {
+          "train": 49,
+          "val": 6,
+          "test": 7
+        },
+        "pastRatings": 55,
+        "pastRatingMean": 3.8181818181818183,
+        "likedPastRatings": 38,
+        "genreStats": [
+          {
+            "genre": "Drama",
+            "pastCount": 32,
+            "pastFraction": 0.5818181818181818,
+            "pastMeanRating": 3.84375,
+            "likedCount": 22,
+            "likedFraction": 0.5789473684210527
+          },
+          {
+            "genre": "Romance",
+            "pastCount": 16,
+            "pastFraction": 0.2909090909090909,
+            "pastMeanRating": 4.125,
+            "likedCount": 13,
+            "likedFraction": 0.34210526315789475
+          },
+          {
+            "genre": "Comedy",
+            "pastCount": 15,
+            "pastFraction": 0.2727272727272727,
+            "pastMeanRating": 3.7333333333333334,
+            "likedCount": 11,
+            "likedFraction": 0.2894736842105263
+          },
+          {
+            "genre": "Action",
+            "pastCount": 8,
+            "pastFraction": 0.14545454545454545,
+            "pastMeanRating": 4.25,
+            "likedCount": 7,
+            "likedFraction": 0.18421052631578946
+          },
+          {
+            "genre": "Thriller",
+            "pastCount": 11,
+            "pastFraction": 0.2,
+            "pastMeanRating": 3.6363636363636362,
+            "likedCount": 6,
+            "likedFraction": 0.15789473684210525
+          },
+          {
+            "genre": "Crime",
+            "pastCount": 8,
+            "pastFraction": 0.14545454545454545,
+            "pastMeanRating": 4.125,
+            "likedCount": 6,
+            "likedFraction": 0.15789473684210525
+          },
+          {
+            "genre": "Sci-Fi",
+            "pastCount": 4,
+            "pastFraction": 0.07272727272727272,
+            "pastMeanRating": 3.75,
+            "likedCount": 2,
+            "likedFraction": 0.05263157894736842
+          },
+          {
+            "genre": "War",
+            "pastCount": 3,
+            "pastFraction": 0.05454545454545454,
+            "pastMeanRating": 3.6666666666666665,
+            "likedCount": 2,
+            "likedFraction": 0.05263157894736842
+          },
+          {
+            "genre": "Adventure",
+            "pastCount": 2,
+            "pastFraction": 0.03636363636363636,
+            "pastMeanRating": 4.5,
+            "likedCount": 2,
+            "likedFraction": 0.05263157894736842
+          },
+          {
+            "genre": "Film-Noir",
+            "pastCount": 2,
+            "pastFraction": 0.03636363636363636,
+            "pastMeanRating": 4.5,
+            "likedCount": 2,
+            "likedFraction": 0.05263157894736842
+          },
+          {
+            "genre": "Mystery",
+            "pastCount": 4,
+            "pastFraction": 0.07272727272727272,
+            "pastMeanRating": 3.5,
+            "likedCount": 1,
+            "likedFraction": 0.02631578947368421
+          },
+          {
+            "genre": "Animation",
+            "pastCount": 1,
+            "pastFraction": 0.01818181818181818,
+            "pastMeanRating": 4.0,
+            "likedCount": 1,
+            "likedFraction": 0.02631578947368421
+          },
+          {
+            "genre": "Children's",
+            "pastCount": 1,
+            "pastFraction": 0.01818181818181818,
+            "pastMeanRating": 4.0,
+            "likedCount": 1,
+            "likedFraction": 0.02631578947368421
+          },
+          {
+            "genre": "Horror",
+            "pastCount": 2,
+            "pastFraction": 0.03636363636363636,
+            "pastMeanRating": 3.0,
+            "likedCount": 0,
+            "likedFraction": 0.0
+          }
+        ],
+        "likedPastMovieExamples": [
+          {
+            "id": 272,
+            "title": "Good Will Hunting (1997)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888979061
+          },
+          {
+            "id": 50,
+            "title": "Star Wars (1977)",
+            "genres": [
+              "Action",
+              "Adventure",
+              "Romance",
+              "Sci-Fi",
+              "War"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 100,
+            "title": "Fargo (1996)",
+            "genres": [
+              "Crime",
+              "Drama",
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 127,
+            "title": "Godfather, The (1972)",
+            "genres": [
+              "Action",
+              "Crime",
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 242,
+            "title": "Kolya (1996)",
+            "genres": [
+              "Comedy"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 251,
+            "title": "Shall We Dance? (1996)",
+            "genres": [
+              "Comedy"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 283,
+            "title": "Emma (1996)",
+            "genres": [
+              "Drama",
+              "Romance"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 285,
+            "title": "Secrets & Lies (1996)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 302,
+            "title": "L.A. Confidential (1997)",
+            "genres": [
+              "Crime",
+              "Film-Noir",
+              "Mystery",
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 311,
+            "title": "Wings of the Dove, The (1997)",
+            "genres": [
+              "Drama",
+              "Romance",
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 313,
+            "title": "Titanic (1997)",
+            "genres": [
+              "Action",
+              "Drama",
+              "Romance"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888552084
+          },
+          {
+            "id": 275,
+            "title": "Sense and Sensibility (1995)",
+            "genres": [
+              "Drama",
+              "Romance"
+            ],
+            "unknownGenre": false,
+            "rating": 5,
+            "timestamp": 888550939
+          },
+          {
+            "id": 300,
+            "title": "Air Force One (1997)",
+            "genres": [
+              "Action",
+              "Thriller"
+            ],
+            "unknownGenre": false,
+            "rating": 4,
+            "timestamp": 888979197
+          },
+          {
+            "id": 310,
+            "title": "Rainmaker, The (1997)",
+            "genres": [
+              "Drama"
+            ],
+            "unknownGenre": false,
+            "rating": 4,
+            "timestamp": 888979061
+          },
+          {
+            "id": 237,
+            "title": "Jerry Maguire (1996)",
+            "genres": [
+              "Drama",
+              "Romance"
+            ],
+            "unknownGenre": false,
+            "rating": 4,
+            "timestamp": 888552017
+          }
+        ],
+        "pastMovieIds": [
+          1,
+          10,
+          13,
+          14,
+          19,
+          25,
+          50,
+          100,
+          111,
+          127,
+          237,
+          242,
+          251,
+          255,
+          257,
+          258,
+          269,
+          272,
+          273,
+          274,
+          275,
+          276,
+          277,
+          278,
+          279,
+          280,
+          282,
+          283,
+          284,
+          285,
+          286,
+          287,
+          288,
+          290,
+          291,
+          292,
+          293,
+          294,
+          295,
+          296,
+          297,
+          298,
+          299,
+          300,
+          301,
+          302,
+          303,
+          305,
+          306,
+          307,
+          310,
+          311,
+          312,
+          313,
+          315
+        ],
+        "pastGenreSet": [
+          "Action",
+          "Adventure",
+          "Animation",
+          "Children's",
+          "Comedy",
+          "Crime",
+          "Drama",
+          "Film-Noir",
+          "Horror",
+          "Mystery",
+          "Romance",
+          "Sci-Fi",
+          "Thriller",
+          "War"
+        ],
+        "eligibleTestRelevantCount": 2
+      }
+    ]
+  },
+  "primarySources": [
+    {
+      "url": "https://files.grouplens.org/datasets/movielens/ml-100k-README.txt",
+      "verified": "Exact 100,000 / 943 / 1,682 dimensions; >=20 ratings/user; September 1997-April 1998; genres contain 19 flags including unknown; 2015 citation and DOI. Research use conditions include attribution and permission for redistribution."
+    },
+    {
+      "url": "https://grouplens.org/datasets/movielens/100k/",
+      "verified": "Official release page, April 1998; its 1,000 users/1,700 movies is rounded."
+    },
+    {
+      "url": "https://doi.org/10.1145/2827872",
+      "verified": "DOI checked against authoritative GroupLens dataset README. ACM/DOI web fetch returned 403 in this environment."
+    }
+  ],
+  "citation": "F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems 5(4), Article 19, 19 pages. DOI: 10.1145/2827872."
+}

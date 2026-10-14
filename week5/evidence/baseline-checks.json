@@ -1,0 +1,66 @@
+{
+  "runtime": "4.22.0",
+  "backend": "cpu",
+  "passed": 4,
+  "failed": 0,
+  "pending": 7,
+  "checks": [
+    {
+      "name": "computeBaselineRMSE: toy split matches the hand-computed value",
+      "status": "PASS",
+      "detail": "rmse=1.0000"
+    },
+    {
+      "name": "computeBaselineRMSE: empty split returns 0 (no division by zero)",
+      "status": "PASS",
+      "detail": "guarded"
+    },
+    {
+      "name": "fmt: formats numbers and guards non-finite input",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "name": "movieTitle: resolves ids and falls back for unknown ids",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "name": "predictRating: clamps to [1, 5] and falls back to the global mean",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    },
+    {
+      "name": "initializeFactors: allocates tf.Variable factors and the global mean",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    },
+    {
+      "name": "trainMF: returns one finite history row per epoch",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    },
+    {
+      "name": "selectBestCheckpoint: smallest valRMSE wins, ties keep the earliest epoch",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    },
+    {
+      "name": "recommendTopK: excludes train+val items but allows test-rated items",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    },
+    {
+      "name": "recallAtK: relevant movie at rank 1 scores 1.0; at rank 11 scores 0.0",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    },
+    {
+      "name": "recallAtK: empty test set returns 0 without dividing by zero",
+      "status": "PENDING",
+      "detail": "TODO(hw5): not implemented yet."
+    }
+  ],
+  "tensorsBefore": 0,
+  "tensorsAfter": 16
+}
