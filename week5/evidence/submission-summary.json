@@ -1,0 +1,35 @@
+{
+  "implementationCommit": "0066ff4776dd5ec32f90cd9bfb282b108f4daa31",
+  "baseline": {
+    "passed": 4,
+    "failed": 0,
+    "pending": 7
+  },
+  "finalSupplied": {
+    "passed": 8,
+    "failed": 3,
+    "pending": 0
+  },
+  "additional": {
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browser": {
+    "primaryOptions": {
+      "epochs": 20,
+      "lr": 0.01,
+      "reg": 0.05,
+      "batchSize": 64,
+      "seed": 202605
+    },
+    "checkpoint": 4,
+    "validationRMSE": 1.0359420385016769,
+    "testRMSE": 1.0800297262374678,
+    "baselineTestRMSE": 1.2257193843347933,
+    "macroRecall10": 0.007776564224782002,
+    "usersEvaluated": 861
+  },
+  "verification": "Previously completed checks; this publication step did not rerun model training. All original assertions preserved.",
+  "rawJournal": "Excluded from public repository intentionally"
+}

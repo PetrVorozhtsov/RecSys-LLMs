@@ -1,0 +1,403 @@
+{
+  "method": "Independent Python/NumPy float64 parsing, splitting, scoring and full-pool ranking; no application JavaScript or TensorFlow imported.",
+  "selectedEpoch": 2,
+  "trainMean": 3.5806026199776437,
+  "metrics": {
+    "train": {
+      "rawCount": 79619,
+      "eligibleCount": 79619,
+      "excluded": 0,
+      "numpyMF_RMSE": 0.9240932314796968,
+      "browserMF_RMSE": 0.9240931963345362,
+      "absoluteDifference": 3.5145160559579836e-08,
+      "baselineRMSE": 1.1052085142573125,
+      "squaredErrorSum": 67990.5097348493
+    },
+    "validation": {
+      "rawCount": 9596,
+      "eligibleCount": 9561,
+      "excluded": 35,
+      "numpyMF_RMSE": 1.0054025536567812,
+      "browserMF_RMSE": 1.005402514951864,
+      "absoluteDifference": 3.8704917271203954e-08,
+      "baselineRMSE": 1.1800217293694546,
+      "squaredErrorSum": 9664.586693534853
+    },
+    "test": {
+      "rawCount": 10785,
+      "eligibleCount": 10732,
+      "excluded": 53,
+      "numpyMF_RMSE": 1.031831538418929,
+      "browserMF_RMSE": 1.0318315195757684,
+      "absoluteDifference": 1.8843160587422858e-08,
+      "baselineRMSE": 1.2257193843347933,
+      "squaredErrorSum": 11426.106305690551
+    }
+  },
+  "recallAt10": {
+    "numpy": 0.04163440190611778,
+    "browser": 0.04163440190611778,
+    "users": 861,
+    "totalHits": 202,
+    "totalEligibleRelevant": 5142,
+    "unseenRelevantMovies": 13,
+    "excludedUsers": 82
+  },
+  "predictionAudit": {
+    "userId": 196,
+    "movieId": 411,
+    "actual": 4,
+    "numpyDot": 2.6701111501096877,
+    "browser": 2.6701111793518066,
+    "absoluteDifference": 2.9242118948502593e-08,
+    "squaredError": 1.7686043530625777
+  },
+  "recommendations": {
+    "1": [
+      {
+        "rank": 1,
+        "movieId": 178,
+        "title": "12 Angry Men (1957)",
+        "score": 4.639366347071141,
+        "browserScore": 4.639366149902344,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 108
+      },
+      {
+        "rank": 2,
+        "movieId": 483,
+        "title": "Casablanca (1942)",
+        "score": 4.538256249387077,
+        "browserScore": 4.538256645202637,
+        "genres": [
+          "Drama",
+          "Romance",
+          "War"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 222
+      },
+      {
+        "rank": 3,
+        "movieId": 408,
+        "title": "Close Shave, A (1995)",
+        "score": 4.5101224844128955,
+        "browserScore": 4.510122299194336,
+        "genres": [
+          "Animation",
+          "Comedy",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 96
+      },
+      {
+        "rank": 4,
+        "movieId": 318,
+        "title": "Schindler's List (1993)",
+        "score": 4.4830379941827445,
+        "browserScore": 4.483037948608398,
+        "genres": [
+          "Drama",
+          "War"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 257
+      },
+      {
+        "rank": 5,
+        "movieId": 657,
+        "title": "Manchurian Candidate, The (1962)",
+        "score": 4.467929721002985,
+        "browserScore": 4.467929840087891,
+        "genres": [
+          "Film-Noir",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 112
+      },
+      {
+        "rank": 6,
+        "movieId": 1142,
+        "title": "When We Were Kings (1996)",
+        "score": 4.434299813523463,
+        "browserScore": 4.434299945831299,
+        "genres": [
+          "Documentary"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 34
+      },
+      {
+        "rank": 7,
+        "movieId": 603,
+        "title": "Rear Window (1954)",
+        "score": 4.431568290566583,
+        "browserScore": 4.431568622589111,
+        "genres": [
+          "Mystery",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 173
+      },
+      {
+        "rank": 8,
+        "movieId": 478,
+        "title": "Philadelphia Story, The (1940)",
+        "score": 4.429081667235103,
+        "browserScore": 4.429081439971924,
+        "genres": [
+          "Comedy",
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 85
+      },
+      {
+        "rank": 9,
+        "movieId": 357,
+        "title": "One Flew Over the Cuckoo's Nest (1975)",
+        "score": 4.420333235743048,
+        "browserScore": 4.420332908630371,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 232
+      },
+      {
+        "rank": 10,
+        "movieId": 648,
+        "title": "Quiet Man, The (1952)",
+        "score": 4.413967809186235,
+        "browserScore": 4.413967609405518,
+        "genres": [
+          "Comedy",
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 54
+      }
+    ],
+    "2": [
+      {
+        "rank": 1,
+        "movieId": 178,
+        "title": "12 Angry Men (1957)",
+        "score": 4.421453597289318,
+        "browserScore": 4.421453475952148,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 108
+      },
+      {
+        "rank": 2,
+        "movieId": 408,
+        "title": "Close Shave, A (1995)",
+        "score": 4.366151924168946,
+        "browserScore": 4.366151332855225,
+        "genres": [
+          "Animation",
+          "Comedy",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 96
+      },
+      {
+        "rank": 3,
+        "movieId": 318,
+        "title": "Schindler's List (1993)",
+        "score": 4.311635581853007,
+        "browserScore": 4.311635971069336,
+        "genres": [
+          "Drama",
+          "War"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 257
+      },
+      {
+        "rank": 4,
+        "movieId": 483,
+        "title": "Casablanca (1942)",
+        "score": 4.2811789185318485,
+        "browserScore": 4.281178951263428,
+        "genres": [
+          "Drama",
+          "Romance",
+          "War"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 222
+      },
+      {
+        "rank": 5,
+        "movieId": 657,
+        "title": "Manchurian Candidate, The (1962)",
+        "score": 4.24688993231447,
+        "browserScore": 4.246890068054199,
+        "genres": [
+          "Film-Noir",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 112
+      },
+      {
+        "rank": 6,
+        "movieId": 1142,
+        "title": "When We Were Kings (1996)",
+        "score": 4.238060187717057,
+        "browserScore": 4.238059997558594,
+        "genres": [
+          "Documentary"
+        ],
+        "newGenres": [
+          "Documentary"
+        ],
+        "trainingRatingCount": 34
+      },
+      {
+        "rank": 7,
+        "movieId": 172,
+        "title": "Empire Strikes Back, The (1980)",
+        "score": 4.235978492290524,
+        "browserScore": 4.235978126525879,
+        "genres": [
+          "Action",
+          "Adventure",
+          "Drama",
+          "Romance",
+          "Sci-Fi",
+          "War"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 330
+      },
+      {
+        "rank": 8,
+        "movieId": 513,
+        "title": "Third Man, The (1949)",
+        "score": 4.20780920966571,
+        "browserScore": 4.207808971405029,
+        "genres": [
+          "Mystery",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 69
+      },
+      {
+        "rank": 9,
+        "movieId": 603,
+        "title": "Rear Window (1954)",
+        "score": 4.200513662774791,
+        "browserScore": 4.2005133628845215,
+        "genres": [
+          "Mystery",
+          "Thriller"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 173
+      },
+      {
+        "rank": 10,
+        "movieId": 357,
+        "title": "One Flew Over the Cuckoo's Nest (1975)",
+        "score": 4.196622698710132,
+        "browserScore": 4.196622848510742,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 232
+      }
+    ]
+  },
+  "profiles": {
+    "1": {
+      "pastRatings": 244,
+      "pastGenres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Children's",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Fantasy",
+        "Film-Noir",
+        "Horror",
+        "Musical",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Thriller",
+        "War",
+        "Western"
+      ],
+      "recommendedGenreCounts": {
+        "Drama": 4,
+        "Romance": 3,
+        "War": 2,
+        "Animation": 1,
+        "Comedy": 3,
+        "Thriller": 3,
+        "Film-Noir": 1,
+        "Documentary": 1,
+        "Mystery": 1
+      },
+      "newTitleFraction": 1.0,
+      "recommendedMoviesWithNewGenre": 0,
+      "testRelevantEligible": 19,
+      "hits": 1
+    },
+    "2": {
+      "pastRatings": 55,
+      "pastGenres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Children's",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Thriller",
+        "War"
+      ],
+      "recommendedGenreCounts": {
+        "Drama": 5,
+        "Animation": 1,
+        "Comedy": 1,
+        "Thriller": 4,
+        "War": 3,
+        "Romance": 2,
+        "Film-Noir": 1,
+        "Documentary": 1,
+        "Action": 1,
+        "Adventure": 1,
+        "Sci-Fi": 1,
+        "Mystery": 2
+      },
+      "newTitleFraction": 1.0,
+      "recommendedMoviesWithNewGenre": 1,
+      "testRelevantEligible": 2,
+      "hits": 0
+    }
+  },
+  "passed": true
+}

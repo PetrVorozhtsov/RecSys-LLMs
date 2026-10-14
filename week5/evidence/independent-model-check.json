@@ -1,0 +1,373 @@
+{
+  "method": "Independent Python/NumPy float64 parsing, splitting, scoring and full-pool ranking; no application JavaScript or TensorFlow imported.",
+  "selectedEpoch": 4,
+  "trainMean": 3.5806026199776437,
+  "metrics": {
+    "train": {
+      "rawCount": 79619,
+      "eligibleCount": 79619,
+      "excluded": 0,
+      "numpyMF_RMSE": 0.8662978108208808,
+      "browserMF_RMSE": 0.8662978067458597,
+      "absoluteDifference": 4.075021098337572e-09,
+      "baselineRMSE": 1.1052085142573125,
+      "squaredErrorSum": 59751.82196987445
+    },
+    "validation": {
+      "rawCount": 9596,
+      "eligibleCount": 9561,
+      "excluded": 35,
+      "numpyMF_RMSE": 1.0359420594318804,
+      "browserMF_RMSE": 1.0359420385016769,
+      "absoluteDifference": 2.0930203570301842e-08,
+      "baselineRMSE": 1.1800217293694546,
+      "squaredErrorSum": 10260.635262730171
+    },
+    "test": {
+      "rawCount": 10785,
+      "eligibleCount": 10732,
+      "excluded": 53,
+      "numpyMF_RMSE": 1.0800296413418744,
+      "browserMF_RMSE": 1.0800297262374678,
+      "absoluteDifference": 8.48955934440454e-08,
+      "baselineRMSE": 1.2257193843347933,
+      "squaredErrorSum": 12518.491928932184
+    }
+  },
+  "recallAt10": {
+    "numpy": 0.007776564224782001,
+    "browser": 0.007776564224782002,
+    "users": 861,
+    "totalHits": 51,
+    "totalEligibleRelevant": 5142,
+    "unseenRelevantMovies": 13,
+    "excludedUsers": 82
+  },
+  "predictionAudit": {
+    "userId": 196,
+    "movieId": 411,
+    "actual": 4,
+    "numpyDot": 3.1797834627891834,
+    "browser": 3.179783582687378,
+    "absoluteDifference": 1.1989819448388062e-07,
+    "squaredError": 0.6727551679141028
+  },
+  "recommendations": {
+    "1": [
+      {
+        "rank": 1,
+        "movieId": 1558,
+        "title": "Aparajito (1956)",
+        "score": 6.153474127959779,
+        "browserScore": 6.153473854064941,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 5
+      },
+      {
+        "rank": 2,
+        "movieId": 1500,
+        "title": "Santa with Muscles (1996)",
+        "score": 6.0647868667920655,
+        "browserScore": 6.064786911010742,
+        "genres": [
+          "Comedy"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 2
+      },
+      {
+        "rank": 3,
+        "movieId": 850,
+        "title": "Perfect Candidate, A (1996)",
+        "score": 5.810049077331972,
+        "browserScore": 5.810048580169678,
+        "genres": [
+          "Documentary"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 3
+      },
+      {
+        "rank": 4,
+        "movieId": 1085,
+        "title": "Carried Away (1996)",
+        "score": 5.805905075483901,
+        "browserScore": 5.805905342102051,
+        "genres": [
+          "Drama",
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 5
+      },
+      {
+        "rank": 5,
+        "movieId": 1537,
+        "title": "Cosi (1996)",
+        "score": 5.7790360575736575,
+        "browserScore": 5.779035568237305,
+        "genres": [
+          "Comedy"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 3
+      },
+      {
+        "rank": 6,
+        "movieId": 1114,
+        "title": "Faithful (1996)",
+        "score": 5.720154746551474,
+        "browserScore": 5.720155239105225,
+        "genres": [
+          "Comedy"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 5
+      },
+      {
+        "rank": 7,
+        "movieId": 1512,
+        "title": "World of Apu, The (Apur Sansar) (1959)",
+        "score": 5.719390098001324,
+        "browserScore": 5.719390392303467,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 6
+      },
+      {
+        "rank": 8,
+        "movieId": 835,
+        "title": "Gay Divorcee, The (1934)",
+        "score": 5.6935428485514805,
+        "browserScore": 5.693542957305908,
+        "genres": [
+          "Comedy",
+          "Musical",
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 12
+      },
+      {
+        "rank": 9,
+        "movieId": 868,
+        "title": "Hearts and Minds (1996)",
+        "score": 5.644260626068049,
+        "browserScore": 5.644261360168457,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 3
+      },
+      {
+        "rank": 10,
+        "movieId": 694,
+        "title": "Persuasion (1995)",
+        "score": 5.517046773584354,
+        "browserScore": 5.51704740524292,
+        "genres": [
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 38
+      }
+    ],
+    "2": [
+      {
+        "rank": 1,
+        "movieId": 1500,
+        "title": "Santa with Muscles (1996)",
+        "score": 6.430371230248669,
+        "browserScore": 6.430371284484863,
+        "genres": [
+          "Comedy"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 2
+      },
+      {
+        "rank": 2,
+        "movieId": 1512,
+        "title": "World of Apu, The (Apur Sansar) (1959)",
+        "score": 6.042799501891735,
+        "browserScore": 6.042799472808838,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 6
+      },
+      {
+        "rank": 3,
+        "movieId": 1085,
+        "title": "Carried Away (1996)",
+        "score": 5.788407418087604,
+        "browserScore": 5.788406848907471,
+        "genres": [
+          "Drama",
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 5
+      },
+      {
+        "rank": 4,
+        "movieId": 1367,
+        "title": "Faust (1994)",
+        "score": 5.775415323946301,
+        "browserScore": 5.775414943695068,
+        "genres": [
+          "Animation"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 4
+      },
+      {
+        "rank": 5,
+        "movieId": 1558,
+        "title": "Aparajito (1956)",
+        "score": 5.768132918594991,
+        "browserScore": 5.768133163452148,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 5
+      },
+      {
+        "rank": 6,
+        "movieId": 1463,
+        "title": "Boys, Les (1997)",
+        "score": 5.734378369948585,
+        "browserScore": 5.734378814697266,
+        "genres": [
+          "Comedy"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 3
+      },
+      {
+        "rank": 7,
+        "movieId": 694,
+        "title": "Persuasion (1995)",
+        "score": 5.639546086077163,
+        "browserScore": 5.639545917510986,
+        "genres": [
+          "Romance"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 38
+      },
+      {
+        "rank": 8,
+        "movieId": 507,
+        "title": "Streetcar Named Desire, A (1951)",
+        "score": 5.627585017185055,
+        "browserScore": 5.627584457397461,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 89
+      },
+      {
+        "rank": 9,
+        "movieId": 1452,
+        "title": "Lady of Burlesque (1943)",
+        "score": 5.616252693811916,
+        "browserScore": 5.616252422332764,
+        "genres": [
+          "Comedy",
+          "Mystery"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 1
+      },
+      {
+        "rank": 10,
+        "movieId": 1536,
+        "title": "Aiqing wansui (1994)",
+        "score": 5.60828661504228,
+        "browserScore": 5.6082868576049805,
+        "genres": [
+          "Drama"
+        ],
+        "newGenres": [],
+        "trainingRatingCount": 1
+      }
+    ]
+  },
+  "profiles": {
+    "1": {
+      "pastRatings": 244,
+      "pastGenres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Children's",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Fantasy",
+        "Film-Noir",
+        "Horror",
+        "Musical",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Thriller",
+        "War",
+        "Western"
+      ],
+      "recommendedGenreCounts": {
+        "Drama": 4,
+        "Comedy": 4,
+        "Documentary": 1,
+        "Romance": 3,
+        "Musical": 1
+      },
+      "newTitleFraction": 1.0,
+      "recommendedMoviesWithNewGenre": 0,
+      "testRelevantEligible": 19,
+      "hits": 0
+    },
+    "2": {
+      "pastRatings": 55,
+      "pastGenres": [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Children's",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Film-Noir",
+        "Horror",
+        "Mystery",
+        "Romance",
+        "Sci-Fi",
+        "Thriller",
+        "War"
+      ],
+      "recommendedGenreCounts": {
+        "Comedy": 3,
+        "Drama": 5,
+        "Romance": 2,
+        "Animation": 1,
+        "Mystery": 1
+      },
+      "newTitleFraction": 1.0,
+      "recommendedMoviesWithNewGenre": 0,
+      "testRelevantEligible": 2,
+      "hits": 0
+    }
+  },
+  "passed": true
+}

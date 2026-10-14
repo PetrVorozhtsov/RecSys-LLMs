@@ -85,3 +85,19 @@ The cited `docs/homework-guidelines/guidelines.md` is absent from the pinned ups
 - F. Maxwell Harper and Joseph A. Konstan (2015), The MovieLens Datasets: History and Context, ACM TiiS 5(4), Article 19. [DOI 10.1145/2827872](https://doi.org/10.1145/2827872).
 
 Codex implemented the code, ran browser/automated checks, calculated independent audits and drafted the report. Personal verification by Petr is not claimed. Retrospective relevance does not establish causal effects on streaming-platform retention or revenue.
+
+## Measured default run
+
+WebGL, seed 202605, 20 epochs, learning rate 0.01, regularization 0.05, batch size 64. Selected checkpoint: epoch 4. Validation RMSE **1.035942**; test RMSE **1.080030**, versus eligible-test mean baseline **1.225719**. Macro Recall@10 **0.0077765642** over 861 users. Retrieval is weak despite improved rating RMSE. Original checks: **8 pass / 3 conflicting failures / 0 pending**; additional contract checks: **11 pass / 0 fail / 0 skipped**.
+
+Saved selected factors: `evidence/browser-run.json`. Independent NumPy recalculation: `evidence/independent-model-check.json`. To reproduce it from week5 (requires NumPy):
+
+```sh
+python verify_export.py evidence/browser-run.json --repo . --out evidence/independent-model-check.json
+```
+
+The report describes implementation commit `0066ff4776dd5ec32f90cd9bfb282b108f4daa31`; the later report commit does not change the algorithm.
+
+## Published demonstration
+
+[Open HW5 on GitHub Pages](https://petrvorozhtsov.github.io/RecSys-LLMs/week5/). Hosting uses the student fork's main branch and repository root. The successful deployment and MovieLens loading were checked; the model and report describe the same implementation. The raw coding-agent journal remains a separate submission file and is not hosted here.
