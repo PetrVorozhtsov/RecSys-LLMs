@@ -1,0 +1,10 @@
+{
+  "returncode": 0,
+  "pipeline_seconds": 511.0993003000003,
+  "identical": {
+    "submission.csv": true,
+    "validation_results.json": true,
+    "audit.json": true,
+    "examples.json": true
+  }
+}

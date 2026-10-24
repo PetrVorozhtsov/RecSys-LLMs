@@ -1,0 +1,30 @@
+{
+  "checks": "passed",
+  "submission_rows": 1260,
+  "submission_header": [
+    "user_id",
+    "tv_show_id"
+  ],
+  "unique_ids_per_row": 5,
+  "example_lists_checked": 6,
+  "hand_example_ap5": 0.8333333333333333,
+  "cold_content_example": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "expected_popularity_fallback": [
+    "10",
+    "20",
+    "30",
+    "40",
+    "50"
+  ],
+  "verification_seconds": 0.012285599999813712,
+  "python": "3.12.14",
+  "cpu": "AMD64 Family 23 Model 96 Stepping 1, AuthenticAMD",
+  "logical_cpus": 16,
+  "ram_gib": 15.37
+}

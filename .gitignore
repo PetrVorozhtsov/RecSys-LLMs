@@ -6,3 +6,6 @@ week4/backup/
 exam_sweettv/data/
 exam_sweettv/outputs/
 exam_sweettv/*.zip
+exam_sweettv/outputs_reproduction/
+exam_sweettv/tmp/
+exam_sweettv/__pycache__/
