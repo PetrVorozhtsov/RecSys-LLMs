@@ -28,9 +28,9 @@ by the user. Users without usable history received the same popularity fallback.
 
 | Method | MAP@5 |
 |---|---:|
-| Popularity | TBD |
-| Content-based | TBD |
-| Association | TBD |
+| Popularity | 0.162263 |
+| Content-based | 0.008688 |
+| Association | 0.157865 |
 
 The final method was selected using validation MAP@5 only.
 
@@ -50,3 +50,6 @@ behaviour only, cold-start cases exist, and no A/B or revenue claim is made.
 
 Record runtime, Python version, threshold values, random seed (if any), join
 counts, candidate counts, and the exact Kaggle submission screenshot.
+
+The supplied Kaggle screenshot records Private Score 0.01454 and Public Score
+0.01740 for `submission.csv`.

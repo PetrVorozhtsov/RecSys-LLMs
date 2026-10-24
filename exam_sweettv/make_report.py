@@ -7,7 +7,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 
 ROOT = Path(__file__).parent
 OUT = ROOT / "report.pdf"
@@ -58,6 +58,12 @@ for user,data in examples.items():
         rows.append([P(method,'SmallRu'),P('<br/>'.join(bits),'SmallRu')])
     tab=Table(rows,colWidths=[28*mm,145*mm]); tab.setStyle(TableStyle([('GRID',(0,0),(-1,-1),0.25,colors.grey),('BACKGROUND',(0,0),(-1,0),colors.lightgrey),('VALIGN',(0,0),(-1,-1),'TOP')])); story.append(tab); story.append(Spacer(1,3*mm))
 story += [P('5. Strategy and limitations','H1Ru'), P('For this run I would deploy association scoring as a candidate generator with the popularity list as a fallback, then add a lightweight content re-ranker when metadata quality is sufficient. The association list stays close to popularity on validation, but uses the user history to alter ordering. The content model exposes the limitation of the catalogue: most schedule rows have no programme ID and metadata is uneven. The view log records platform behaviour rather than enjoyment, absence from the log does not prove a programme was never seen, and no A/B or revenue claim follows from this offline evaluation.', 'BodyRu')]
-story += [P('6. Reproducibility and submission','H1Ru'), P('The implementation is in exam_sweettv/run.py. Generated artefacts include validation_results.json, audit.json, examples.json and submission.csv. The submission contains 1,260 rows and five space-separated IDs per row. Runtime environment: Python standard library, deterministic ranking and no random seed. Kaggle private-score screenshot and the original AI-session export must be attached before final submission.', 'BodyRu')]
+story += [P('6. Reproducibility and submission','H1Ru'), P('The implementation is in exam_sweettv/run.py. Generated artefacts include validation_results.json, audit.json, examples.json and submission.csv. The submission contains 1,260 rows and five space-separated IDs per row. Runtime environment: Python standard library, deterministic ranking and no random seed. The Kaggle screenshot supplied by the student records Private Score <b>0.01454</b> and Public Score <b>0.01740</b> for submission.csv.', 'BodyRu')]
+score_img = ROOT / 'outputs' / 'score-screen-shot.png'
+if score_img.exists():
+    img = Image(str(score_img))
+    img._restrictSize(176*mm, 118*mm)
+    story += [P('Kaggle score evidence','H1Ru'), img, Spacer(1,2*mm), P('Figure 1. Kaggle Submissions page: submission.csv completed after the deadline; Private Score 0.01454 and Public Score 0.01740.', 'SmallRu')]
+story += [P('The original AI-session export is a separate platform artefact and should be exported from the chat interface if the instructor requires it.', 'SmallRu')]
 doc.build(story)
 print(OUT)
