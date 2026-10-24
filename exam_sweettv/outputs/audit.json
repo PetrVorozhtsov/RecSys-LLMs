@@ -1,0 +1,17 @@
+{
+  "join": {
+    "views": 5821987,
+    "filtered_users": 3648674,
+    "unmatched_or_unlabelled": 1671100,
+    "matched": 502213
+  },
+  "schedule_ids": {
+    "train": 5847,
+    "valid": 6363,
+    "test": 6636
+  },
+  "metadata": 9671,
+  "users_train": 1250,
+  "users_final": 1258,
+  "candidate_final": 9671
+}
