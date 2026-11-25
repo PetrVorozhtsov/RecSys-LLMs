@@ -39,11 +39,17 @@ def export_session(source, destination, label):
                      "custom_tool_call_output", "agent_message"}
     selected = []
     web_calls = set()
-    started = label != "root"
+    started = False
     for index, row in enumerate(rows, 1):
         payload = row.get("payload", {})
         if not isinstance(payload, dict):
             continue
+        # Forked history can be re-timestamped at child creation. Its first
+        # parent-triggered task marks actual child work more reliably than time.
+        if (label != "root" and row.get("type") == "event_msg"
+                and payload.get("type") == "task_started"
+                and payload.get("turn_attribution", {}).get("initiating_agent_path") is not None):
+            started = True
         if row.get("type") != "response_item":
             continue
         item_type = payload.get("type")

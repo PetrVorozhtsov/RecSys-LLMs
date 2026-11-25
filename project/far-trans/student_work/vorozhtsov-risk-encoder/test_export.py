@@ -60,8 +60,13 @@ class CourseworkExportTests(unittest.TestCase):
     def test_child_omits_inherited_earlier_context(self):
         content, _ = self.make_export([
             self.metadata(), self.message("user", "INHERITED_OLD", timestamp="2026-11-25T11:00:00Z"),
+            {"timestamp": "2026-11-25T12:00:00Z", "type": "response_item",
+             "payload": {"type": "function_call_output", "output": "INHERITED_SOURCE_BODY"}},
+            {"timestamp": "2026-11-25T12:01:00Z", "type": "event_msg",
+             "payload": {"type": "task_started", "turn_attribution": {"initiating_agent_path": "/root"}}},
             self.message("assistant", "NEW_CHILD_RESULT", "final_answer")], label="child")
         self.assertNotIn("INHERITED_OLD", content)
+        self.assertNotIn("INHERITED_SOURCE_BODY", content)
         self.assertIn("NEW_CHILD_RESULT", content)
 
 
