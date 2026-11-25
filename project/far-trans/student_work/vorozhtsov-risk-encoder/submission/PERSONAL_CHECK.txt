@@ -1,0 +1,14 @@
+PERSONAL CHECK — to be completed by the student
+
+The assistant has audited these results. The course additionally requires your own check.
+1. Recompute maximum drawdown for the real price window: peak EUR9.80, later trough EUR8.72.
+   Formula: 1 - trough / peak. Convert the result to percent.
+2. For anonymous cohort user 31, the LLM Top-10 binary relevance vector is
+   [0, 0, 0, 1, 0, 0, 0, 0, 0, 0]. There are 1 eligible future purchased assets.
+   DCG=sum(relevance_at_rank / log2(rank+1)); IDCG uses relevant assets first.
+   Saved LLM nDCG@10=0.4306765581. Recompute it and explain why position affects the score.
+3. Check outputs/main/prompts.jsonl: HISTORY records have only age and bands.
+   Explain why post-cutoff purchases and questionnaire riskLevel are absent.
+
+Record your calculation and explanation in student_verification.json (see README), then rebuild the PDF.
+Do not label the assistant's audit as a personal verification.

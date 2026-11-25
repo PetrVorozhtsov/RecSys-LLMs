@@ -1,0 +1,109 @@
+{
+  "protocol_hash": "50efd4aeb415ba6f0c66dd0793a7c2033cdc32a42b86b58eebbca3e81eaf3417",
+  "methods": {
+    "cbf": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.020100011736078574,
+      "ndcg_at_10_nonempty": 0.18272737941889614
+    },
+    "latest_buy": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.027722649787649066,
+      "ndcg_at_10_nonempty": 0.2520240889786279
+    },
+    "latest_buy_or_sell": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.027107048693904026,
+      "ndcg_at_10_nonempty": 0.2464277153991275
+    },
+    "popularity": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.028590012799467643,
+      "ndcg_at_10_nonempty": 0.25990920726788763
+    },
+    "user_knn": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.02851755867914901,
+      "ndcg_at_10_nonempty": 0.2592505334468092
+    },
+    "statistical_risk": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.026714477327687725,
+      "ndcg_at_10_nonempty": 0.24285888479716114
+    },
+    "llm_risk": {
+      "users": 100,
+      "nonempty_truth_users": 11,
+      "empty_truth_users": 89,
+      "ndcg_at_10": 0.02851755867914901,
+      "ndcg_at_10_nonempty": 0.2592505334468092
+    }
+  },
+  "llm_failures": [],
+  "llm_attempts": 100,
+  "candidate_recall_micro": 0.8888888888888888,
+  "candidate_truth_hits": 16,
+  "total_truth_assets": 18,
+  "generation_seconds": 706.5799074000679,
+  "input_tokens": 43827,
+  "output_tokens": 22732,
+  "api_cost": 0,
+  "api_cost_note": "local inference; electricity and hardware cost not measured",
+  "llm_scoring_seconds": 0.004785699886269867
+}
+
+{
+  "verification": "pass",
+  "comparison": {
+    "mean_delta": 0.0018030813514612859,
+    "nonempty_mean_delta": 0.016391648649648052,
+    "improved_users": 3,
+    "tied_users": 97,
+    "worse_users": 0,
+    "changed_top10_users": 69,
+    "paired_bootstrap_95pct": [
+      0.0,
+      0.004306765580733931
+    ],
+    "llm_knn_identical_top10_users": 100,
+    "llm_minus_knn_ndcg_all": 0.0
+  },
+  "ndcg_check": {
+    "cohort_index": 31,
+    "relevance_vector": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "dcg": 0.43067655807339306,
+    "idcg": 1.0,
+    "ndcg": 0.43067655807339306,
+    "expected_ndcg": 0.43067655807339306,
+    "passed": true
+  },
+  "failure_case": {
+    "description": "Semantic failure despite valid JSON: all 100 LLM profiles were near-uniform, and all Top-10 lists equalled user-kNN.",
+    "root_cause": "Every probability is within .001 of 1/3, bounding the weighted risk-score difference between candidates by 0.0005. The smallest adjacent kNN-prior gap is 0.015306, so these risk profiles cannot change the order. The separate influence of prompt wording and model capacity has not been isolated.",
+    "fix": "Next, test a prompt without the literal uniform-output template on earlier development histories and compare a stronger model while keeping the same information. This semantic fix has not been run or validated on this test cohort.",
+    "verification": "Checked all 100 normalized profiles within .001 of uniform and compared all saved LLM/kNN Top-10 lists byte-for-byte: 100 identical. The strict schema fixed the pilot format failure, not this semantic limitation."
+  }
+}
