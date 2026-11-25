@@ -1,0 +1,91 @@
+COMMAND: -m unittest test_risk test_experiment test_export -v
+test_cross_section_respects_category_and_loss_direction (test_risk.PriceFeatureTests.test_cross_section_respects_category_and_loss_direction) ... ok
+test_flat_short_and_stale_windows_are_unknown (test_risk.PriceFeatureTests.test_flat_short_and_stale_windows_are_unknown) ... ok
+test_long_gap_does_not_become_log_return (test_risk.PriceFeatureTests.test_long_gap_does_not_become_log_return) ... ok
+test_manual_drawdown_and_downside_denominator (test_risk.PriceFeatureTests.test_manual_drawdown_and_downside_denominator) ... ok
+test_monotone_known_log_returns (test_risk.PriceFeatureTests.test_monotone_known_log_returns) ... ok
+test_store_asof_metadata_and_purchases (test_risk.PriceFeatureTests.test_store_asof_metadata_and_purchases) ... ok
+test_window_and_cutoff_exclude_future_price (test_risk.PriceFeatureTests.test_window_and_cutoff_exclude_future_price) ... ok
+test_half_life_and_unknown_dimensions (test_risk.RiskMethodTests.test_half_life_and_unknown_dimensions) ... ok
+test_popularity_does_not_expand_sufficient_candidate_pool (test_risk.RiskMethodTests.test_popularity_does_not_expand_sufficient_candidate_pool) ... ok
+test_profile_rejects_bad_values (test_risk.RiskMethodTests.test_profile_rejects_bad_values) ... ok
+test_self_exclusion_neighbor_ties_and_popular_fill (test_risk.RiskMethodTests.test_self_exclusion_neighbor_ties_and_popular_fill) ... ok
+test_shared_scoring_moves_relevant_band_and_keeps_uniform_order (test_risk.RiskMethodTests.test_shared_scoring_moves_relevant_band_and_keeps_uniform_order) ... ok
+test_invalid_shape_boolean_nan_or_sum_raises (test_experiment.ModelOutputTests.test_invalid_shape_boolean_nan_or_sum_raises) ... ok
+test_prompt_redacts_identity_and_dates (test_experiment.ModelOutputTests.test_prompt_redacts_identity_and_dates) ... ok
+test_small_rounding_error_normalizes (test_experiment.ModelOutputTests.test_small_rounding_error_normalizes) ... ok
+test_unknown_metric_is_shared_uniform_control (test_experiment.ModelOutputTests.test_unknown_metric_is_shared_uniform_control) ... ok
+test_child_omits_inherited_earlier_context (test_export.CourseworkExportTests.test_child_omits_inherited_earlier_context) ... ok
+test_keeps_generated_code_and_results_without_private_records (test_export.CourseworkExportTests.test_keeps_generated_code_and_results_without_private_records) ... ok
+test_root_omits_unrelated_previous_work (test_export.CourseworkExportTests.test_root_omits_unrelated_previous_work) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 0.062s
+
+OK
+
+
+COMMAND: -m unittest discover -s vendor -p test_starter.py -v
+test_tv10_empty_truth_is_zero (test_starter.FrozenVectors.test_tv10_empty_truth_is_zero) ... ok
+test_tv11_ndcg_ideal_caps_at_ten (test_starter.FrozenVectors.test_tv11_ndcg_ideal_caps_at_ten) ... ok
+test_tv12_stable_tie_break (test_starter.FrozenVectors.test_tv12_stable_tie_break) ... ok
+test_tv13_short_list_not_padded (test_starter.FrozenVectors.test_tv13_short_list_not_padded) ... ok
+test_tv14_aggregate_macro_counts_empty_as_zero (test_starter.FrozenVectors.test_tv14_aggregate_macro_counts_empty_as_zero) ... ok
+test_tv15_aggregate_four_users (test_starter.FrozenVectors.test_tv15_aggregate_four_users) ... ok
+test_tv16_aggregate_empty_is_none (test_starter.FrozenVectors.test_tv16_aggregate_empty_is_none) ... ok
+test_tv1_content_profile_cosine (test_starter.FrozenVectors.test_tv1_content_profile_cosine) ... ok
+test_tv2_asset_without_tokens_scores_zero (test_starter.FrozenVectors.test_tv2_asset_without_tokens_scores_zero) ... ok
+test_tv3_empty_history_scores_zero (test_starter.FrozenVectors.test_tv3_empty_history_scores_zero) ... ok
+test_tv4_unit_vectors (test_starter.FrozenVectors.test_tv4_unit_vectors) ... ok
+test_tv5_popularity_distinct_buyers (test_starter.FrozenVectors.test_tv5_popularity_distinct_buyers) ... ok
+test_tv6_zero_popularity_still_rankable (test_starter.FrozenVectors.test_tv6_zero_popularity_still_rankable) ... ok
+test_tv7_ineligible_asset_never_ranked (test_starter.FrozenVectors.test_tv7_ineligible_asset_never_ranked) ... ok
+test_tv8_ndcg_partial_hit (test_starter.FrozenVectors.test_tv8_ndcg_partial_hit) ... ok
+test_tv9_ndcg_perfect (test_starter.FrozenVectors.test_tv9_ndcg_perfect) ... ok
+test_duplicate_rejected (test_starter.RankingValidation.test_duplicate_rejected) ... ok
+test_encoder_rejects_nan_negative_and_unobserved (test_starter.RankingValidation.test_encoder_rejects_nan_negative_and_unobserved) ... ok
+test_non_string_id_rejected (test_starter.RankingValidation.test_non_string_id_rejected) ... ok
+test_order_rejects_non_finite_scores (test_starter.RankingValidation.test_order_rejects_non_finite_scores) ... ok
+test_outside_ids_rejected (test_starter.RankingValidation.test_outside_ids_rejected) ... ok
+test_short_or_long_list_rejected (test_starter.RankingValidation.test_short_or_long_list_rejected) ... ok
+test_valid_ten_unique (test_starter.RankingValidation.test_valid_ten_unique) ... ok
+test_tv17_latest_buy_and_buy_or_sell_differ_on_sell_only_asset (test_starter.RecencyVectors.test_tv17_latest_buy_and_buy_or_sell_differ_on_sell_only_asset) ... ok
+test_tv18_short_prefix_is_filled_from_popularity (test_starter.RecencyVectors.test_tv18_short_prefix_is_filled_from_popularity) ... ok
+test_tv19_scan_keeps_only_retained_past_rows (test_starter.RecencyVectors.test_tv19_scan_keeps_only_retained_past_rows) ... ok
+test_tv20_same_date_tie_breaks_by_isin (test_starter.RecencyVectors.test_tv20_same_date_tie_breaks_by_isin) ... ok
+test_tv21_assets_outside_the_eligible_set_are_dropped (test_starter.RecencyVectors.test_tv21_assets_outside_the_eligible_set_are_dropped) ... ok
+test_tv22_latest_event_wins_per_asset (test_starter.RecencyVectors.test_tv22_latest_event_wins_per_asset) ... ok
+test_tv23_cold_user_gets_popularity_list (test_starter.RecencyVectors.test_tv23_cold_user_gets_popularity_list) ... ok
+test_aggregate_labels_match_run (test_starter.TemporalFixture.test_aggregate_labels_match_run) ... ok
+test_asof_profiles_assets_prices (test_starter.TemporalFixture.test_asof_profiles_assets_prices) ... ok
+test_cold_user_falls_back_to_popularity (test_starter.TemporalFixture.test_cold_user_falls_back_to_popularity) ... ok
+test_console_summary_rounds_only_the_display (test_starter.TemporalFixture.test_console_summary_rounds_only_the_display) ... ok
+test_export_prompts_both_stages (test_starter.TemporalFixture.test_export_prompts_both_stages) ... ok
+test_few_shot_invalid_date_and_collision (test_starter.TemporalFixture.test_few_shot_invalid_date_and_collision) ... ok
+test_identity_plugin_custom_equals_cbf (test_starter.TemporalFixture.test_identity_plugin_custom_equals_cbf) ... ok
+test_missing_response_raises (test_starter.TemporalFixture.test_missing_response_raises) ... ok
+test_negative_rows_and_exact_duplicates (test_starter.TemporalFixture.test_negative_rows_and_exact_duplicates) ... ok
+test_no_future_truth_in_context (test_starter.TemporalFixture.test_no_future_truth_in_context) ... ok
+test_plugin_rerank_candidates_come_from_encoder (test_starter.TemporalFixture.test_plugin_rerank_candidates_come_from_encoder) ... ok
+test_plugin_without_hooks_raises (test_starter.TemporalFixture.test_plugin_without_hooks_raises) ... ok
+test_portable_cli_outside_workspace (test_starter.TemporalFixture.test_portable_cli_outside_workspace) ... ok
+test_protocol_hash_mismatch_raises (test_starter.TemporalFixture.test_protocol_hash_mismatch_raises) ... ok
+test_raw_scan_matches_loader_history (test_starter.TemporalFixture.test_raw_scan_matches_loader_history) ... ok
+test_recency_buy_or_sell_includes_sell_only_asset (test_starter.TemporalFixture.test_recency_buy_or_sell_includes_sell_only_asset) ... ok
+test_recency_cold_user_equals_popularity (test_starter.TemporalFixture.test_recency_cold_user_equals_popularity) ... ok
+test_recency_helpers_have_no_truth_input (test_starter.TemporalFixture.test_recency_helpers_have_no_truth_input) ... ok
+test_recency_latest_buy_uses_past_buy_dates_only (test_starter.TemporalFixture.test_recency_latest_buy_uses_past_buy_dates_only) ... ok
+test_recency_lists_unchanged_by_future_mutation (test_starter.TemporalFixture.test_recency_lists_unchanged_by_future_mutation) ... ok
+test_recency_methods_are_present_and_full_ten (test_starter.TemporalFixture.test_recency_methods_are_present_and_full_ten) ... ok
+test_recency_respects_exclude_seen (test_starter.TemporalFixture.test_recency_respects_exclude_seen) ... ok
+test_recency_shortlist_is_filled_from_popularity (test_starter.TemporalFixture.test_recency_shortlist_is_filled_from_popularity) ... ok
+test_short_eligible_pool_raises (test_starter.TemporalFixture.test_short_eligible_pool_raises) ... ok
+test_simulated_identity_responses_equal_cbf_both_stages (test_starter.TemporalFixture.test_simulated_identity_responses_equal_cbf_both_stages) ... ok
+test_stage_mismatch_raises (test_starter.TemporalFixture.test_stage_mismatch_raises) ... ok
+test_two_cli_runs_byte_identical (test_starter.TemporalFixture.test_two_cli_runs_byte_identical) ... ok
+test_users_and_contexts_stable_after_future_mutation (test_starter.TemporalFixture.test_users_and_contexts_stable_after_future_mutation) ... ok
+
+----------------------------------------------------------------------
+Ran 58 tests in 4.879s
+
+OK

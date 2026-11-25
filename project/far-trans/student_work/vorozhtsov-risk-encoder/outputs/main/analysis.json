@@ -1,0 +1,93 @@
+{
+  "summary": "The LLM exceeds the statistical risk control by +0.0018 all-user nDCG@10, but its Top-10 is identical to original user-kNN for 100/100 investors. All 100/100 effective LLM profiles are near-uniform (each probability within .001 of 1/3), despite 82 investors having at least one known historical risk band. The apparent advantage over the frequency control is therefore not evidence of useful LLM risk inference. This run found no incremental ranking benefit over user-kNN.",
+  "comparison": {
+    "mean_delta": 0.0018030813514612859,
+    "nonempty_mean_delta": 0.016391648649648052,
+    "improved_users": 3,
+    "tied_users": 97,
+    "worse_users": 0,
+    "changed_top10_users": 69,
+    "paired_bootstrap_95pct": [
+      0.0,
+      0.004306765580733931
+    ],
+    "llm_knn_identical_top10_users": 100,
+    "llm_minus_knn_ndcg_all": 0.0
+  },
+  "example_loss": null,
+  "failure_case": {
+    "description": "Semantic failure despite valid JSON: all 100 LLM profiles were near-uniform, and all Top-10 lists equalled user-kNN.",
+    "root_cause": "Every probability is within .001 of 1/3, bounding the weighted risk-score difference between candidates by 0.0005. The smallest adjacent kNN-prior gap is 0.015306, so these risk profiles cannot change the order. The separate influence of prompt wording and model capacity has not been isolated.",
+    "fix": "Next, test a prompt without the literal uniform-output template on earlier development histories and compare a stronger model while keeping the same information. This semantic fix has not been run or validated on this test cohort.",
+    "verification": "Checked all 100 normalized profiles within .001 of uniform and compared all saved LLM/kNN Top-10 lists byte-for-byte: 100 identical. The strict schema fixed the pilot format failure, not this semantic limitation."
+  },
+  "retrieval_failure_case": {
+    "description": "Retrieval missed 2 of 18 held-out eligible assets; 2 future buyers have at least one missed asset.",
+    "root_cause": "Only assets bought by the 50 nearest neighbors can enter the top-50 pool, except popularity fill to ten; profile encoding cannot recover an excluded asset.",
+    "fix": "Next experiment: enlarge the candidate pool or union it with a popularity/CBF pool before freezing the same pool for both encoders. This proposed retrieval change has not been evaluated.",
+    "verification": "Independently intersected future eligible purchases with each saved candidate list; micro candidate recall 0.888889. This diagnoses the bottleneck; it does not validate the proposed next experiment."
+  },
+  "engineering_case": {
+    "description": "The asset metadata has 3 same-ISIN/same-date duplicate rows.",
+    "root_cause": "Selecting the last tied CSV row would disagree with the instructor's first-row tie policy.",
+    "fix": "Historical metadata uses the first row for equal timestamps, matching starter.latest_before.",
+    "verification": "The unit test pins this tie rule and the frozen eligible universe matches the starter exactly."
+  },
+  "input_summary": {
+    "eligible_assets": 767,
+    "candidate_assets_with_all_seven_features": 535,
+    "users_with_any_known_historical_risk_band": 82,
+    "users_with_all_unknown_historical_bands": 18,
+    "purchases_supplied": 877,
+    "uniform_effective_llm_profiles": 100
+  },
+  "short_history_slice": {
+    "rule": "one or two distinct assets in all pre-cutoff eligible purchase history",
+    "methods": {
+      "cbf": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      },
+      "latest_buy": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      },
+      "latest_buy_or_sell": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      },
+      "popularity": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      },
+      "user_knn": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      },
+      "statistical_risk": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      },
+      "llm_risk": {
+        "users": 56,
+        "nonempty_truth_users": 1,
+        "ndcg_at_10": 0.0,
+        "ndcg_at_10_nonempty": 0.0
+      }
+    }
+  },
+  "next_experiment": "Use an earlier development split to diagnose uniform-profile collapse with a prompt ablation and a stronger model. Then test broader frozen candidates and the volatility/drawdown-only ablation. Do not tune on these held-out purchases.",
+  "bootstrap_note": "2000 paired user resamples, seed 42; descriptive only, 11 future buyers."
+}

@@ -1,0 +1,15 @@
+{
+  "model_repository": "Qwen/Qwen3-1.7B-GGUF",
+  "model_revision": "90862c4b9d2787eaed51d12237eafdfe7c5f6077",
+  "model_file": "Qwen3-1.7B-Q8_0.gguf",
+  "model_sha256": "061b54daade076b5d3362dac252678d17da8c68f07560be70818cace6590cb1a",
+  "quantization": "Q8_0",
+  "runtime_repository": "ggml-org/llama.cpp",
+  "runtime_tag": "b12722",
+  "runtime_commit": "e6443bd7eb970d940b0669cd9ea0d82d91d620a1",
+  "runtime_archive": "llama-b12722-bin-win-vulkan-x64.zip",
+  "runtime_archive_sha256": "1241fdbe50964b74bad10b873688fb95aad3504fd7b159f80a59f59fbddb31f8",
+  "backend": "Vulkan",
+  "model_path": "C:\\Users\\petrv\\Desktop\\jin\\hw 8\\models\\Qwen3-1.7B-Q8_0.gguf",
+  "runtime_directory": "C:\\Users\\petrv\\Desktop\\jin\\hw 8\\runtime\\b12722"
+}

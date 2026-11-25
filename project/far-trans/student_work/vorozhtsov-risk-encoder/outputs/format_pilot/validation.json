@@ -1,0 +1,21 @@
+{
+  "purpose": "pre-evaluation output format check on first3frozen users; no future labels used",
+  "validation": [
+    {
+      "user_id": "7F4C738BC9D4A144C518",
+      "valid": false,
+      "error": "Expected seven metric triples"
+    },
+    {
+      "user_id": "B6E50192F1453975F157",
+      "valid": true,
+      "error": null
+    },
+    {
+      "user_id": "8A30590EA4AE29504AEE",
+      "valid": false,
+      "error": "Expecting value: line 1 column 1 (char 0)"
+    }
+  ],
+  "decision": "freeze strict shape-only JSON schema for full100user mainrun; no retries of main outputs"
+}

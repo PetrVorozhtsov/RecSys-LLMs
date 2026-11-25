@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+*.gguf
+*.exe
+*.dll
+submission/*session*.jsonl
+submission/ai_sessions/
+*.zip
+!outputs/
+!outputs/**
+outputs/main/baseline/contexts.jsonl

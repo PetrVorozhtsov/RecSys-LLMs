@@ -1,0 +1,19 @@
+{
+  "classical_baselines_whole_run_seconds": 11.472279299981892,
+  "baseline_timing_scope": "one subprocess: data loading and all four baselines together",
+  "risk_preparation_whole_run_seconds": 73.1489243999822,
+  "format_pilot_invocations": [
+    {
+      "new_calls": 3,
+      "wall_seconds": 14.803300000028685,
+      "saved_responses_reused": 0
+    }
+  ],
+  "inference_invocations": [
+    {
+      "new_calls": 100,
+      "wall_seconds": 706.6956917999778,
+      "saved_responses_reused": 0
+    }
+  ]
+}

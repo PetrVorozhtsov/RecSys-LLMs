@@ -1,0 +1,39 @@
+{
+  "upstream_repository": "https://github.com/dryjins/RecSys-LLMs",
+  "upstream_commit": "799e54c0493cf7e2b014152548ae5c18ee24a8f5",
+  "prompt_version": "risk-profile-v1",
+  "metrics_order": [
+    "volatility",
+    "max_drawdown",
+    "downside_rms",
+    "worst_5_return",
+    "current_drawdown",
+    "share_drawdown_gt5",
+    "vol_change"
+  ],
+  "price_window_calendar_days": 90,
+  "min_valid_returns": 40,
+  "max_price_gap_days": 7,
+  "max_price_staleness_days": 7,
+  "risk_band_percentiles": [
+    33,
+    67
+  ],
+  "band_reference": "same asset category as of feature date",
+  "history_limit_purchases": 40,
+  "statistical_weight": "2 ** (-age_days / 90)",
+  "neighbors": 50,
+  "max_candidates": 50,
+  "knn_similarity": "binary purchase cosine, exclude self",
+  "rank_score": "1 - zero_based_candidate_rank / (candidate_count - 1)",
+  "final_score": ".75 * rank_score + .25 * mean(seven risk probabilities)",
+  "unknown_candidate_probability": 0.3333333333333333,
+  "invalid_output": "statistical risk profile; retain and count user",
+  "normalization_tolerance": 0.02,
+  "changes_from_hw1": "official Qwen GGUF Q8_0 quantization and llama.cpp Vulkan for a 4GB GPU; main feature and ranking settings retained",
+  "input_privacy": "model sees ages and seven risk bands only; no customer, asset or questionnaire fields",
+  "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "format_pilot": "first three frozen users; no future labels; 2/3 unconstrained outputs invalid, so strict shape-only JSON schema fixed before main run",
+  "structured_generation": "seven arrays of three numbers in [0,1]; sums and meaning validated separately; no semantic repair"
+}

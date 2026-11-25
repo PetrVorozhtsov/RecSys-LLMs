@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/dryjins/RecSys-LLMs",
+  "commit": "799e54c0493cf7e2b014152548ae5c18ee24a8f5",
+  "source_directory": "project/far-trans",
+  "vendored_unmodified_files": ["starter.py", "test_starter.py", "README.md", "extensions.py"],
+  "license": "MIT; see vendor/UPSTREAM_LICENSE"
+}

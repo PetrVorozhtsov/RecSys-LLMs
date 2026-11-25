@@ -1,0 +1,11 @@
+{
+  "confirmed": false,
+  "statement": "The numerical check was performed by Codex at the student's request. Personal independent verification by the student is not confirmed.",
+  "assistant_calculation": {
+    "peak_eur": 9.8,
+    "subsequent_trough_eur": 8.72,
+    "formula": "(1 - 8.72 / 9.80) * 100",
+    "drawdown_percent": 11.020408163265305,
+    "explanation": "Drawdown is the decline from a previously reached price peak to a later lower observation. A later peak cannot be used to explain an earlier loss."
+  }
+}

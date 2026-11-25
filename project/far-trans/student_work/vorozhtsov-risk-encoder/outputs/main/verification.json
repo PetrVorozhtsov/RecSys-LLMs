@@ -1,0 +1,56 @@
+{
+  "performed_by": "OpenAI Codex; not a student's personal check",
+  "summary": "Automated independent audit passed; student verification remains separate.",
+  "checks": [
+    {
+      "name": "independent_metric_and_ID_audit",
+      "result": "pass",
+      "detail": "Reconstructed truth directly from raw CSV; checked 700 user-method rows and 7000 ranked IDs; maximum independent nDCG error 1.11e-16."
+    },
+    {
+      "name": "protocol_and_data_hashes",
+      "result": "pass",
+      "detail": "Baseline/custom protocol.json objects identical; four current CSV SHA-256 values match frozen protocol."
+    },
+    {
+      "name": "temporal_and_prompt_audit",
+      "result": "pass",
+      "detail": "All 100 model payloads contain only pre-cutoff ages and seven historical bands; no IDs, questionnaire fields, prices or labels; all three custom methods use the same frozen candidate lists."
+    },
+    {
+      "name": "real_transaction_feature_check",
+      "result": "pass",
+      "detail": "64 closes, 63 log returns; maximum drawdown independently 1 - 8.72 / 9.80 = 11.020408%; all closes precede 2021-05-28."
+    }
+  ],
+  "ndcg_check": {
+    "cohort_index": 31,
+    "relevance_vector": [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "dcg": 0.43067655807339306,
+    "idcg": 1.0,
+    "ndcg": 0.43067655807339306,
+    "expected_ndcg": 0.43067655807339306,
+    "passed": true
+  },
+  "feature_check": {
+    "transaction_id": "8996071",
+    "price_count": 64,
+    "return_count": 63,
+    "volatility": 0.014808723617301815,
+    "max_drawdown": 0.11020408163265305,
+    "peak_price": 9.8,
+    "trough_price": 8.72,
+    "passed": true
+  }
+}

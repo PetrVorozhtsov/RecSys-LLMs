@@ -1,0 +1,33 @@
+{
+  "results": [
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "test_risk",
+        "test_experiment",
+        "test_export",
+        "-v"
+      ],
+      "exit_code": 0
+    },
+    {
+      "command": [
+        "C:\\Program Files\\WindowsApps\\OpenAI.CodexPrimaryRuntime.v26-1119-907-0_26.1119.907.0_x64__3k8sg7r9htsxt\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "vendor",
+        "-p",
+        "test_starter.py",
+        "-v"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "project_tests": 19,
+  "instructor_tests": 58,
+  "total_passed": 77
+}

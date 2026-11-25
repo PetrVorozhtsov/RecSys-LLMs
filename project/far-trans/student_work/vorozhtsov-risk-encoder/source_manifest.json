@@ -1,0 +1,29 @@
+{
+  "upstream_commit": "799e54c0493cf7e2b014152548ae5c18ee24a8f5",
+  "hash_policy": "SHA-256 of source text after CRLF-to-LF normalization; identity and personal-check metadata excluded",
+  "files": {
+    ".gitattributes": "3131783d82f971e1a661deab7c0888410a6cdf225968b5a0989816e70a1878c6",
+    ".gitignore": "5b5011066dabd868a3b6d295d5e85ab6efc5346fc41cf0492ea4459679a37efd",
+    "build_report.py": "6605f2d972aab1c2f59b5e0bf83901899a14a748f9d170654b8aa6fc243f6b8e",
+    "download_runtime.py": "14c2a1e7ac5ca52d09a0842b0ceabe3dfaf9b64c6b0a43c4bc037bb430517937",
+    "llm_runtime.py": "0248499604b033bb77309aa8c7d62d181c79330397868f8d23dbccdc30b7fc0e",
+    "package_submission.py": "4f08e2190f1caf8d70f60f0f3efdb769bd7c4417989ce4076d5263015f979a7f",
+    "README.md": "683032c5a74bbd2224d618317cf5cb6bbc01db2fbabc56f9c3ef633205a0cee2",
+    "requirements-report.txt": "e5ac70399c9afe70a988cf80ba744d1916f6198b4e1c015e178cce1b2f7d72c3",
+    "risk_features.py": "0616d30ca555224737f1df2107259afa75cb79dc1d5be443f399759772459b45",
+    "risk_method.py": "4695a0e5e4fe997de2ae1f68567a6b951c6337f93f4be5199ef2a9f6ed23800e",
+    "run_experiment.py": "eacdd7e282155ba9f9f70ae3ec61482053b08fa357727dae6ab148dfbee789bc",
+    "setup_data.py": "81562ba5f4ecf7485a778848e572a7424c5a9bd11ac0dde753186fac96a1e885",
+    "test_experiment.py": "d2d021860176fb53b7cdf18e7eb66dfd4f2460f263acdfe8a242b84b7c6b031f",
+    "test_export.py": "d69d0c29f7d45db566eb15c4d810b62de7b57d591f4d874ca35f929caad43b30",
+    "test_risk.py": "05385fc280b880f194f6164da33cd900c2ed3a65091225ba341639347a56f483",
+    "UPSTREAM.json": "9046ad9bcb6f28816770dc50a5c5d74c0b1befb8c82cb6a08b042256e6c28e28",
+    "vendor/__init__.py": "366dd561c6417735570028e83a9b48fcb70ba0366e70264f72e768fc20d448ec",
+    "vendor/extensions.py": "c80ddbe27846d2f0ca49ce4a66365f4951db2a226b141f5ce1b3b3fdc94114a9",
+    "vendor/README.md": "78da4cab57b1c6ba96bd177fffefaaa47cc60fcd53de2682e304ae371f004735",
+    "vendor/starter.py": "c19b21adeb824737d09835fb5b8818e2d310fee83e5af909eaf8897ea1705b24",
+    "vendor/test_starter.py": "a3a86f98d67f2416a99b1ea70e495ab3b82b3a1e5a8f4a908f0a6bae8e53d1c1",
+    "vendor/UPSTREAM_LICENSE": "c5f8c53cca5166d8654951a96216aa5460a91ad87594c1660d61b1e776a14289",
+    "verify_results.py": "79d62157c8e6d507ec8ecae57cbe919a14cf8d1b34b0db3725e3aca9649705c7"
+  }
+}

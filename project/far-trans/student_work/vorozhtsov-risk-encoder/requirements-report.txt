@@ -1,0 +1,4 @@
+# The recommendation experiment and tests use Python's standard library only.
+# These packages are needed only to rebuild and inspect the PDF report.
+reportlab==4.4.9
+pypdf==6.21.4
