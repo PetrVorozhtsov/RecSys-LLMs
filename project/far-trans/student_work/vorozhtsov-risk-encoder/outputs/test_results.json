@@ -29,5 +29,10 @@
   ],
   "project_tests": 19,
   "instructor_tests": 58,
-  "total_passed": 77
+  "total_passed": 77,
+  "export_policy_followup": {
+    "command": "python -m unittest test_export -v",
+    "passed": 3,
+    "note": "Rechecked same three export tests after adding fetched-web-body omission and payload hashes."
+  }
 }

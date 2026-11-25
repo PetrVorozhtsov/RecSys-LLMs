@@ -38,6 +38,7 @@ def export_session(source, destination, label):
     allowed_types = {"function_call", "function_call_output", "custom_tool_call",
                      "custom_tool_call_output", "agent_message"}
     selected = []
+    web_calls = set()
     started = label != "root"
     for index, row in enumerate(rows, 1):
         payload = row.get("payload", {})
@@ -52,10 +53,20 @@ def export_session(source, destination, label):
                 started = True
         if not started or (label != "root" and row.get("timestamp", "") < created):
             continue
+        if item_type in ("function_call", "custom_tool_call"):
+            descriptor = str(payload.get("name", "")) + str(payload.get("arguments", payload.get("input", "")))
+            if any(marker in descriptor for marker in ("tools.web__run(", "search_service_web_run", "web.run")):
+                web_calls.add(payload.get("call_id"))
         keep = item_type in allowed_types
         if item_type == "message":
             keep = role == "user" or (role == "assistant" and payload.get("phase") in ("commentary", "final_answer", "final"))
         if keep:
+            if item_type in ("function_call_output", "custom_tool_call_output") and payload.get("call_id") in web_calls:
+                original = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+                payload = {"type": item_type, "call_id": payload.get("call_id"),
+                           "output": {"fetched_source_body_omitted": True,
+                                      "original_payload_sha256": digest(original),
+                                      "note": "The source request/URLs are retained; primary-source findings and citations are in the report. Computational results are retained in full."}}
             selected.append({"source_session": label, "source_line": index,
                              "timestamp": row.get("timestamp"), "type": row["type"],
                              "payload": payload})
@@ -65,7 +76,7 @@ def export_session(source, destination, label):
                 "source_file": source.name, "source_snapshot_sha256": digest(raw),
                 "session_id": first_meta.get("session_id", first_meta.get("id")),
                 "cli_version": first_meta.get("cli_version"),
-                "scope": "Visible coursework messages, code, tool calls and outputs; internal instructions/reasoning/runtime metadata omitted."}
+                "scope": "Visible coursework messages, code, calls and computational outputs. Fetched web source bodies are replaced by hashes; internal instructions/reasoning/runtime metadata omitted."}
     exported = ("\n".join(json.dumps(value, ensure_ascii=False) for value in [metadata] + selected) + "\n").encode("utf-8")
     destination.write_bytes(exported)
     return {"file": destination.name, "source": source.name, "records": len(selected),
@@ -88,8 +99,8 @@ def main():
         for label, filename in SESSION_FILES.items():
             entries.append(export_session(args.sessions_dir / filename, export_dir / (label + ".jsonl"), label))
         manifest = {"format": "documented-coursework-derivative-v1", "sessions": entries,
-                    "includes": "Visible coursework messages, generated code, tool calls and results, including delegated implementation.",
-                    "omits": "Internal reasoning and instructions, runtime bookkeeping, and inherited/earlier unrelated conversation records.",
+                    "includes": "Visible coursework messages, generated code, tool calls and computational results, including delegated implementation.",
+                    "omits": "Internal reasoning/instructions, runtime bookkeeping, inherited earlier unrelated records and fetched web source bodies (requests and payload hashes retained).",
                     "root_start": "User request to inspect the instructor repository and complete HW8.",
                     "note": "Snapshot taken after the completed experiment and PDF checks; later packaging/final messages may be absent."}
         (export_dir / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
@@ -98,7 +109,9 @@ def main():
             "The assignment permits a documented derivative preserving generated code, calls and results.\n"
             "Each JSONL record retains the source response-item payload plus its original session label,\n"
             "line number and timestamp. Tool call arguments, generated patches/code and tool results\n"
-            "are preserved. Visible coursework user/assistant messages are retained. Internal reasoning,\n"
+            "are preserved. Fetched web source bodies are replaced by their hashes; source requests/URLs\n"
+            "remain recorded, and consulted-source findings/citations are in the PDF. Computational\n"
+            "outputs are retained in full. Visible coursework messages are retained. Internal reasoning,\n"
             "system/developer instructions and runtime bookkeeping are omitted. Child exports exclude\n"
             "inherited earlier context; the root begins at the execution request. The manifest records\n"
             "the SHA-256 of each source snapshot and each derivative. Code and results also appear\n"

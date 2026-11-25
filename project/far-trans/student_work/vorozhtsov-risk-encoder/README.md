@@ -168,6 +168,7 @@ The documented AI-session derivative includes the coursework portion of the root
 chat and implementation subagent sessions. It preserves visible messages,
 generated code, tool calls and measured outputs with source line references and
 hashes. Internal instructions, private reasoning and runtime bookkeeping are
-omitted. See `submission/ai_sessions/README.txt` and `manifest.json` for the exact
+omitted. Fetched web source bodies are represented by hashes and source requests;
+computational outputs are retained in full. See `submission/ai_sessions/README.txt` and `manifest.json` for the exact
 export policy. `package_submission.py` builds the deliverable archive. The
 experiment scripts do not submit work through the course channel.

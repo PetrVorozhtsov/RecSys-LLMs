@@ -30,11 +30,15 @@ class CourseworkExportTests(unittest.TestCase):
                 "payload": {"type": "function_call", "name": "apply_patch", "arguments": "GENERATED_CODE"}}
         output = {"timestamp": "2026-11-25T12:02:01Z", "type": "response_item",
                   "payload": {"type": "function_call_output", "output": "TEST_RESULT"}}
+        web_call = {"timestamp": "2026-11-25T12:03:00Z", "type": "response_item",
+                    "payload": {"type": "function_call", "name": "search_service_web_run", "call_id": "web1", "arguments": "SOURCE_URL"}}
+        web_output = {"timestamp": "2026-11-25T12:03:01Z", "type": "response_item",
+                      "payload": {"type": "function_call_output", "call_id": "web1", "output": "FETCHED_SOURCE_BODY"}}
         rows = [self.metadata(), self.message("user", "выполни последнее задание hw8"),
                 self.message("developer", "DEVELOPER_PRIVATE"),
                 self.message("assistant", "PRIVATE_REASONING", "analysis"),
                 {"type": "response_item", "payload": {"type": "reasoning", "summary": "INTERNAL_SUMMARY"}},
-                self.message("assistant", "VISIBLE_UPDATE", "commentary"), call, output]
+                self.message("assistant", "VISIBLE_UPDATE", "commentary"), call, output, web_call, web_output]
         content, manifest = self.make_export(rows)
         for secret in ("PRIVATE_INSTRUCTIONS", "DEVELOPER_PRIVATE", "PRIVATE_REASONING", "INTERNAL_SUMMARY"):
             self.assertNotIn(secret, content)
@@ -43,7 +47,10 @@ class CourseworkExportTests(unittest.TestCase):
         payloads = [json.loads(line).get("payload") for line in content.splitlines()]
         self.assertIn(call["payload"], payloads)
         self.assertIn(output["payload"], payloads)
-        self.assertEqual(manifest["records"], 4)
+        self.assertIn("SOURCE_URL", content)
+        self.assertNotIn("FETCHED_SOURCE_BODY", content)
+        self.assertIn("original_payload_sha256", content)
+        self.assertEqual(manifest["records"], 6)
 
     def test_root_omits_unrelated_previous_work(self):
         content, _ = self.make_export([self.metadata(), self.message("user", "OLD_UNRELATED"),
